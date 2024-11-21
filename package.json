@@ -1,0 +1,35 @@
+{
+    "name": "cordova-plugin-epson-lw-print",
+    "version": "0.0.1",
+    "description": "An Android Cordova plugin to communicate with epson LW printers with proprietary SDK.",
+    "cordova": {
+      "id": "cordova-plugin-epson-lw-print",
+      "platforms": [
+        "android"
+      ]
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/MelvinSatyadi/CordovaEpsonLWPrint.git"
+    },
+    "keywords": [
+      "Toast",
+      "Notification",
+      "Message",
+      "Alert",
+      "ecosystem:cordova",
+      "cordova-android"
+    ],
+    "engines": [
+      {
+        "name": "cordova",
+        "version": ">=3.0.0"
+      }
+    ],
+    "author": "Melvin Satyadi <melvin.satyadi@gmail.com>",
+    "license": "Apache 2.0",
+    "bugs": {
+      "url": "https://github.com/MelvinSatyadi/CordovaEpsonLWPrint/issues"
+    },
+    "homepage": "https://github.com/MelvinSatyadi/CordovaEpsonLWPrint/"
+  }
