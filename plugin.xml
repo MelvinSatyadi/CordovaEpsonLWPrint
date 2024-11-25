@@ -27,6 +27,7 @@
         </config-file>
 
         <source-file src="src/android/EpsonLWPrint.java" target-dir="src/com/melvinsatyadi/cordova/plugin" />
+        <source-file src="src/android/DeviceInfo.java" target-dir="src/com/melvinsatyadi/cordova/plugin" />
         <source-file src="src/android/libs/LWPrint.jar" target-dir="libs" />
 
     <config-file target="AndroidManifest.xml" parent="/*">
