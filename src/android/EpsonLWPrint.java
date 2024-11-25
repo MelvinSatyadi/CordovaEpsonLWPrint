@@ -54,7 +54,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 			lpPrintDiscoverPrinter.startDiscover(this);
 		}
 		catch (Exception e) {
-			callbackContext.error("Error starting discovery! ")
+			callbackContext.error("Error starting discovery! ");
 		}
 		callbackContext.success();
   }
