@@ -17,3 +17,5 @@ EpsonLWPrint.install = function () {
   window.plugins.epsonLWPrint = new EpsonLWPrint();
   return window.plugins.epsonLWPrint;
 };
+
+cordova.addConstructor(EpsonLWPrint.install);
