@@ -15,5 +15,5 @@ EpsonLWPrint.install = function () {
     window.plugins = {};
   }
   window.plugins.epsonLWPrint = new EpsonLWPrint();
-  return window.plugins.EpsonLWPrint;
+  return window.plugins.epsonLWPrint;
 };
