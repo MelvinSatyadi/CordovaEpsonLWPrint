@@ -12,6 +12,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+//java imports
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class EpsonLWPrint extends CordovaPlugin {
 
