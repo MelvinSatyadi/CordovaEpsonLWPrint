@@ -14,8 +14,7 @@ import org.json.JSONObject;
 
 
 public class EpsonLWPrint extends CordovaPlugin {
-  
-	ListView listView;
+
 	List<String> dataList = new ArrayList<String>();
 	List<DeviceInfo> deviceList = new ArrayList<DeviceInfo>();
 	ArrayAdapter<String> adapter;
