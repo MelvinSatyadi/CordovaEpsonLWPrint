@@ -1,19 +1,19 @@
 var exec = require('cordova/exec');
 
-function EpsonLWPrint() {}
+function EpsonLWPrint() { }
 
-EpsonLWPrint.prototype.startDiscover = function(fnSuccess, fnError){
+EpsonLWPrint.prototype.startDiscover = function (fnSuccess, fnError) {
   exec(fnSuccess, fnError, "EpsonLWPrint", "startDiscover", []);
 }
 
-EpsonLWPrint.prototype.getDeviceList = function(fnSuccess, fnError){
+EpsonLWPrint.prototype.getDeviceList = function (fnSuccess, fnError) {
   exec(fnSuccess, fnError, "EpsonLWPrint", "getDeviceList", []);
 }
 
-EpsonLWPrint.install = function() {
-  if(!window.plugins) {
+EpsonLWPrint.install = function () {
+  if (!window.plugins) {
     window.plugins = {};
   }
   window.plugins.EpsonLWPrint = new EpsonLWPrint();
   return window.plugins.EpsonLWPrint;
-}
+};
