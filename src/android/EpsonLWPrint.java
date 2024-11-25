@@ -99,7 +99,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 	  }
       json.put(jsonObj);
     }
-    callbackContext.success(json);
+    callbackContext.success(json.toString());
   }
 
   class ServiceCallback implements LWPrintDiscoverPrinterCallback {
