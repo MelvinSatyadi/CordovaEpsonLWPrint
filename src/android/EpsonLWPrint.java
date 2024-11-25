@@ -22,7 +22,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	List<String> dataList = new ArrayList<String>();
 	List<DeviceInfo> deviceList = new ArrayList<DeviceInfo>();
-	ArrayAdapter<String> adapter;
+	
 
   @Override
   public boolean execute(String action, JSONArray args,
@@ -197,7 +197,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		handler.postDelayed(new Runnable() {
 			public void run() {
 				dataList.add(name);
-				adapter.notifyDataSetChanged();
+				//adapter.notifyDataSetChanged();
 			}
 		}, 1);
 	}
@@ -206,7 +206,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		handler.postDelayed(new Runnable() {
 			public void run() {
 				dataList.set(index, name);
-				adapter.notifyDataSetChanged();
+				//adapter.notifyDataSetChanged();
 			}
 		}, 1);
 	}
