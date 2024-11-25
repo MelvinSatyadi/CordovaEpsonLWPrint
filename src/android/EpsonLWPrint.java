@@ -19,11 +19,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.EnumSet;
 
+//android imports
+import android.content.Context;
+import android.os.Looper;
+import android.text.TextUtils;
+
 
 public class EpsonLWPrint extends CordovaPlugin {
 
+	private static final String SEP = System.getProperty("line.separator");
+	private String type = "_pdl-datastream._tcp.local.";
+
 	List<String> dataList = new ArrayList<String>();
 	List<DeviceInfo> deviceList = new ArrayList<DeviceInfo>();
+
+	
+	ServiceCallback listener;
+	LWPrintDiscoverPrinter lpPrintDiscoverPrinter;
+
+	android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
 	
 
   @Override
@@ -49,15 +63,21 @@ public class EpsonLWPrint extends CordovaPlugin {
       }
   }
 
-  boolean startDiscover(CallbackContext callbackContext){
-    EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
-		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
+  void startDiscover(CallbackContext callbackContext){
+    //EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
+		//lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
+
+		List<String> typeList = new ArrayList<String>();
+		typeList.add(type);
+
+		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(typeList);
 
 		// Sets the callback
 		lpPrintDiscoverPrinter.setCallback(listener = new ServiceCallback());
 		// Starts discovery
 		try{
-			lpPrintDiscoverPrinter.startDiscover(this);
+			Context context = this.cordova.getActivity().getApplicationContext();
+			lpPrintDiscoverPrinter.startDiscover(context);
 		}
 		catch (Exception e) {
 			callbackContext.error("Error starting discovery! ");
@@ -65,14 +85,19 @@ public class EpsonLWPrint extends CordovaPlugin {
 		callbackContext.success();
   }
 
-  boolean getDeviceList(CallbackContext callbackContext){
+  void getDeviceList(CallbackContext callbackContext){
     JSONArray json = new JSONArray();
     for (DeviceInfo info : deviceList){
-      jsonObj = new JSONObject();
-      jsonObj.put(name,info.getName());
-      jsonObj.put(host,info.getHost());
-      jsonObj.put(mac,info.getMacaddress());
-      json.add(jsonObj);
+      JSONObject jsonObj = new JSONObject();
+	  try{
+    		jsonObj.put("name",info.getName());
+      		jsonObj.put("host",info.getHost());
+      		jsonObj.put("mac",info.getMacaddress());
+	  }
+	  catch(JSONException e){
+
+	  }
+      json.put(jsonObj);
     }
     callbackContext.success(json);
   }
@@ -217,7 +242,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		handler.postDelayed(new Runnable() {
 			public void run() {
 				dataList.remove(index);
-				adapter.notifyDataSetChanged();
+				//adapter.notifyDataSetChanged();
 			}
 		}, 1);
 	}
