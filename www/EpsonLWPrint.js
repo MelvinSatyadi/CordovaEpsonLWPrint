@@ -1,12 +1,19 @@
 var exec = require('cordova/exec');
 
-var EpsonLWPrint = {
-  startDiscover: function(fnSuccess, fnError){
-    exec(fnSuccess, fnError, "EpsonLWPrint", "startDiscover", []);
-  },
-  getDeviceList: function(fnSuccess, fnError){
-    exec(fnSuccess, fnError, "EpsonLWPrint", "getDeviceList", []);
-  }
-};
+function EpsonLWPrint() {}
 
-module.exports = ToastyPlugin;
+EpsonLWPrint.prototype.startDiscover = function(fnSuccess, fnError){
+  exec(fnSuccess, fnError, "EpsonLWPrint", "startDiscover", []);
+}
+
+EpsonLWPrint.prototype.getDeviceList = function(fnSuccess, fnError){
+  exec(fnSuccess, fnError, "EpsonLWPrint", "getDeviceList", []);
+}
+
+EpsonLWPrint.install = function() {
+  if(!window.plugins) {
+    window.plugins = {};
+  }
+  window.plugins.EpsonLWPrint = new EpsonLWPrint();
+  return window.plugins.EpsonLWPrint;
+}
