@@ -50,8 +50,13 @@ public class EpsonLWPrint extends CordovaPlugin {
 		// Sets the callback
 		lpPrintDiscoverPrinter.setCallback(listener = new ServiceCallback());
 		// Starts discovery
-		lpPrintDiscoverPrinter.startDiscover(this);
-    return true;
+		try{
+			lpPrintDiscoverPrinter.startDiscover(this);
+		}
+		catch (Exception e) {
+			callbackContext.error("Error starting discovery! ")
+		}
+		callbackContext.success();
   }
 
   boolean getDeviceList(CallbackContext callbackContext){
