@@ -86,9 +86,9 @@ public class EpsonLWPrint extends CordovaPlugin {
 	void getDeviceList(CallbackContext callbackContext) {
 		JSONArray json = new JSONArray();
 		DeviceInfo obj = new DeviceInfo();
-		obj.setName("TestName");
-		obj.setHost("TestHost");
-		obj.setMacaddress("TestMac");
+		obj.setName((String) "TestName");
+		obj.setHost((String) "TestHost");
+		obj.setMacaddress((String) "TestMac");
 		deviceList.add(obj);
 		for (DeviceInfo info : deviceList) {
 			JSONObject jsonObj = new JSONObject();
