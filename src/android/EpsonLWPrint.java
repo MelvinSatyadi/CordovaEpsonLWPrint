@@ -1,5 +1,8 @@
 package com.melvinsatyadi.cordova.plugin;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 //Epson libs
 import com.epson.lwprint.sdk.LWPrintDiscoverPrinter;
 import com.epson.lwprint.sdk.LWPrintDiscoverPrinterCallback;
