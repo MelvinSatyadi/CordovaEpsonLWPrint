@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        id="cordova-plugin-epsonlwprint" version="0.0.1">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="cordova-plugin-epsonlwprint" version="0.0.1">
     <name>Cordova LW Print</name>
-    <description>An Android Cordova plugin to communicate with epson LW printers with proprietary SDK.</description>
+    <description>An Android Cordova plugin to communicate with epson LW printers with proprietary
+        SDK.</description>
     <license>Apache 2.0</license>
     <keywords>cordova,android,printing,epson,labels</keywords>
 
@@ -12,7 +13,7 @@
     <issue>https://github.com/MelvinSatyadi/CordovaEpsonLWPrint/issues</issue>
 
     <engines>
-        <engine name="cordova" version=">=3.0.0"/>
+        <engine name="cordova" version=">=3.0.0" />
     </engines>
 
     <js-module src="www/EpsonLWPrint.js" name="epsonLWPrint">
@@ -22,13 +23,31 @@
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="EpsonLWPrint">
-                <param name="android-package" value="com.melvinsatyadi.cordova.plugin.EpsonLWPrint"/>
+                <param name="android-package" value="com.melvinsatyadi.cordova.plugin.EpsonLWPrint" />
             </feature>
         </config-file>
 
+        <framework src="androidx.appcompat:appcompat:1.6.1" />
 
-        <source-file src="src/android/EpsonLWPrint.java" target-dir="src/com/melvinsatyadi/cordova/plugin" />
-        <source-file src="src/android/DeviceInfo.java" target-dir="src/com/melvinsatyadi/cordova/plugin" />
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+            <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+            <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        </config-file>
+
+        <source-file src="src/android/EpsonLWPrint.java"
+            target-dir="src/com/melvinsatyadi/cordova/plugin" />
+        <source-file src="src/android/DeviceInfo.java"
+            target-dir="src/com/melvinsatyadi/cordova/plugin" />
 
         <source-file src="src/android/libs/LWPrint.jar" target-dir="libs" />
         <source-file src="src/android/libs/json.jar" target-dir="libs" />
@@ -39,19 +58,6 @@
         <source-file src="src/android/libs/x86/libLWPrint.so" target-dir="libs/x86" />
         <source-file src="src/android/libs/x86_64/libLWPrint.so" target-dir="libs/x86_64" />
 
-
-    <config-file target="AndroidManifest.xml" parent="/*">
-        <uses-permission android:name="android.permission.INTERNET"/>
-        <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
-        <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-        <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-        <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-        <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-        <uses-permission android:name="android.permission.BLUETOOTH"/>
-        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    </config-file>
 
     </platform>
 </plugin>
