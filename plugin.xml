@@ -28,8 +28,16 @@
 
         <source-file src="src/android/EpsonLWPrint.java" target-dir="src/com/melvinsatyadi/cordova/plugin" />
         <source-file src="src/android/DeviceInfo.java" target-dir="src/com/melvinsatyadi/cordova/plugin" />
+
         <source-file src="src/android/libs/LWPrint.jar" target-dir="libs" />
         <source-file src="src/android/libs/json.jar" target-dir="libs" />
+
+        <source-file src="src/android/libs/arm64-v8a/libLWPrint.so" target-dir="libs/arm64-v8a" />
+        <source-file src="src/android/libs/armeabi/libLWPrint.so" target-dir="libs/armeabi" />
+        <source-file src="src/android/libs/armeabi-v7a/libLWPrint.so" target-dir="libs/armeabi-v7a" />
+        <source-file src="src/android/libs/x86/libLWPrint.so" target-dir="libs/x86" />
+        <source-file src="src/android/libs/x86_64/libLWPrint.so" target-dir="libs/x86_64" />
+
 
     <config-file target="AndroidManifest.xml" parent="/*">
         <uses-permission android:name="android.permission.INTERNET"/>
