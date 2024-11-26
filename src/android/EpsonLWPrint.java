@@ -144,7 +144,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 			if (TextUtils.isEmpty(obj.getMacaddress())) {
 				// Wi-Fi
-				notifyAdd((String) printer
+				dataList.add((String) printer
 						.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME)
 						+ SEP
 						+ (String) printer
@@ -155,7 +155,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 			} else {
 				if (TextUtils.isEmpty(status)) {
 					// Bluetooth
-					notifyAdd((String) printer
+					dataList.add((String) printer
 							.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME)
 							+ SEP
 							+ (String) printer
@@ -170,7 +170,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 						deviceStatus = Integer.parseInt(status);
 					} catch (NumberFormatException e) {
 					}
-					notifyAdd((String) printer
+					dataList.add((String) printer
 							.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME)
 							+ SEP
 							+ (String) printer
@@ -214,36 +214,9 @@ public class EpsonLWPrint extends CordovaPlugin {
 				}
 			}
 			if (index >= 0) {
-				notifyRemove(index);
 				deviceList.remove(index);
 			}
 		}
 
-	}
-  private void notifyAdd(final String name) {
-		handler.postDelayed(new Runnable() {
-			public void run() {
-				dataList.add(name);
-				//adapter.notifyDataSetChanged();
-			}
-		}, 1);
-	}
-
-	private void notifyUpdate(final int index, final String name) {
-		handler.postDelayed(new Runnable() {
-			public void run() {
-				dataList.set(index, name);
-				//adapter.notifyDataSetChanged();
-			}
-		}, 1);
-	}
-
-	private void notifyRemove(final int index) {
-		handler.postDelayed(new Runnable() {
-			public void run() {
-				dataList.remove(index);
-				//adapter.notifyDataSetChanged();
-			}
-		}, 1);
 	}
 }
