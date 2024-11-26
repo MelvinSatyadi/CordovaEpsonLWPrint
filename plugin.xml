@@ -26,7 +26,7 @@
             </feature>
         </config-file>
 
-        <framework src="androidx.core:core-ktx:+" />
+        <framework src="androidx.core:core-ktx:1.10.1" />
 
         <source-file src="src/android/EpsonLWPrint.java" target-dir="src/com/melvinsatyadi/cordova/plugin" />
         <source-file src="src/android/DeviceInfo.java" target-dir="src/com/melvinsatyadi/cordova/plugin" />

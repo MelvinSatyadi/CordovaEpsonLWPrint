@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 //Epson libs
 import com.epson.lwprint.sdk.LWPrintDiscoverPrinter;
 import com.epson.lwprint.sdk.LWPrintDiscoverPrinterCallback;
+import com.epson.lwprint.sdk.LWPrintDiscoverConnectionType;
 
 // Cordova-required packages
 import org.apache.cordova.CallbackContext;
@@ -27,7 +28,6 @@ import android.content.Context;
 import android.os.Looper;
 import android.text.TextUtils;
 
-
 public class EpsonLWPrint extends CordovaPlugin {
 
 	private static final String SEP = System.getProperty("line.separator");
@@ -36,89 +36,84 @@ public class EpsonLWPrint extends CordovaPlugin {
 	List<String> dataList = new ArrayList<String>();
 	List<DeviceInfo> deviceList = new ArrayList<DeviceInfo>();
 
-	
 	ServiceCallback listener;
 	LWPrintDiscoverPrinter lpPrintDiscoverPrinter;
 
 	android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
-	
 
-  @Override
-  public boolean execute(String action, JSONArray args,
-    CallbackContext callbackContext) {
-      // Verify that the user sent a 'show' action
-      if (action.equals("startDiscover")) {
-        startDiscover(callbackContext);
-        callbackContext.success("Discover Started");
-        return true;
-      }
-      else if (action.equals("stopDiscover")){
-        callbackContext.success("\"" + action + "\" not implemented yet.");
-        return true;
-      }
-      else if (action.equals("getDeviceList")){
-        getDeviceList(callbackContext);
-        return true;
-      }
-      else{
-        callbackContext.error("\"" + action + "\" is not a recognized action.");
-        return false;
-      }
-  }
+	@Override
+	public boolean execute(String action, JSONArray args,
+			CallbackContext callbackContext) {
+		// Verify that the user sent a 'show' action
+		if (action.equals("startDiscover")) {
+			startDiscover(callbackContext);
+			callbackContext.success("Discover Started");
+			return true;
+		} else if (action.equals("stopDiscover")) {
+			callbackContext.success("\"" + action + "\" not implemented yet.");
+			return true;
+		} else if (action.equals("getDeviceList")) {
+			getDeviceList(callbackContext);
+			return true;
+		} else {
+			callbackContext.error("\"" + action + "\" is not a recognized action.");
+			return false;
+		}
+	}
 
-  void startDiscover(CallbackContext callbackContext){
-    //EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
-		//lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
+	void startDiscover(CallbackContext callbackContext) {
 
 		List<String> typeList = new ArrayList<String>();
 		typeList.add(type);
 
-		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(typeList);
+		EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
+		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
+
+		// lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(typeList);
 
 		// Sets the callback
 		lpPrintDiscoverPrinter.setCallback(listener = new ServiceCallback());
 		// Starts discovery
-		try{
+		try {
 			Context context = this.cordova.getActivity().getApplicationContext();
 			lpPrintDiscoverPrinter.startDiscover(context);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			callbackContext.error("Error starting discovery! ");
 		}
 		callbackContext.success();
-  }
+	}
 
-  void getDeviceList(CallbackContext callbackContext){
-    JSONArray json = new JSONArray();
-    for (DeviceInfo info : deviceList){
-      JSONObject jsonObj = new JSONObject();
-	  try{
-    		jsonObj.put("name",info.getName());
-      		jsonObj.put("host",info.getHost());
-      		jsonObj.put("mac",info.getMacaddress());
-	  }
-	  catch(JSONException e){
+	void getDeviceList(CallbackContext callbackContext) {
+		JSONArray json = new JSONArray();
+		for (DeviceInfo info : deviceList) {
+			JSONObject jsonObj = new JSONObject();
+			try {
+				jsonObj.put("name", info.getName());
+				jsonObj.put("host", info.getHost());
+				jsonObj.put("mac", info.getMacaddress());
+			} catch (JSONException e) {
 
-	  }
-      json.put(jsonObj);
-    }
-    callbackContext.success(json.toString());
-  }
+			}
+			json.put(jsonObj);
+		}
+		callbackContext.success(json.toString());
+	}
 
-  class ServiceCallback implements LWPrintDiscoverPrinterCallback {
+	class ServiceCallback implements LWPrintDiscoverPrinterCallback {
 
 		@Override
 		public void onFindPrinter(LWPrintDiscoverPrinter discoverPrinter,
 				Map<String, String> printer) {
 			// Called when printers are detected
 
-            for (DeviceInfo info : deviceList) {
-            	if (info.getName().equals(printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME))
-                 && info.getHost().equals(printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_HOST))
-            	 && info.getMacaddress().equals(printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_SERIAL_NUMBER))) {
-            		return;
-            	}
-            }
+			for (DeviceInfo info : deviceList) {
+				if (info.getName().equals(printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME))
+						&& info.getHost().equals(printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_HOST))
+						&& info.getMacaddress()
+								.equals(printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_SERIAL_NUMBER))) {
+					return;
+				}
+			}
 
 			String type = (String) printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_TYPE);
 			String status = (String) printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_DEVICE_STATUS);
@@ -151,10 +146,10 @@ public class EpsonLWPrint extends CordovaPlugin {
 						.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME)
 						+ SEP
 						+ (String) printer
-							.get(LWPrintDiscoverPrinter.PRINTER_INFO_HOST)
+								.get(LWPrintDiscoverPrinter.PRINTER_INFO_HOST)
 						+ SEP
 						+ (String) printer
-							.get(LWPrintDiscoverPrinter.PRINTER_INFO_TYPE));
+								.get(LWPrintDiscoverPrinter.PRINTER_INFO_TYPE));
 			} else {
 				if (TextUtils.isEmpty(status)) {
 					// Bluetooth
@@ -162,10 +157,10 @@ public class EpsonLWPrint extends CordovaPlugin {
 							.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME)
 							+ SEP
 							+ (String) printer
-								.get(LWPrintDiscoverPrinter.PRINTER_INFO_SERIAL_NUMBER)
+									.get(LWPrintDiscoverPrinter.PRINTER_INFO_SERIAL_NUMBER)
 							+ SEP
 							+ (String) printer
-								.get(LWPrintDiscoverPrinter.PRINTER_INFO_DEVICE_CLASS));
+									.get(LWPrintDiscoverPrinter.PRINTER_INFO_DEVICE_CLASS));
 				} else {
 					// Wi-Fi Direct
 					int deviceStatus = -1;
@@ -177,7 +172,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 							.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME)
 							+ SEP
 							+ (String) printer
-								.get(LWPrintDiscoverPrinter.PRINTER_INFO_SERIAL_NUMBER)
+									.get(LWPrintDiscoverPrinter.PRINTER_INFO_SERIAL_NUMBER)
 							+ SEP
 							+ getDeviceStatusForWifiDirect(deviceStatus));
 				}
@@ -186,18 +181,18 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 		private String getDeviceStatusForWifiDirect(int deviceStatus) {
 			switch (deviceStatus) {
-			case 0:
-				return "Connected";
-			case 1:
-				return "Invited";
-			case 2:
-				return "Failed";
-			case 3:
-				return "Available";
-			case 4:
-				return "Unavailable";
-			default:
-				return "Unknown";
+				case 0:
+					return "Connected";
+				case 1:
+					return "Invited";
+				case 2:
+					return "Failed";
+				case 3:
+					return "Available";
+				case 4:
+					return "Unavailable";
+				default:
+					return "Unknown";
 			}
 		}
 
@@ -220,6 +215,6 @@ public class EpsonLWPrint extends CordovaPlugin {
 				deviceList.remove(index);
 			}
 		}
-
+		
 	}
 }
