@@ -44,6 +44,10 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
 
+	Context myDiscoverContext;
+	CallbackContext myDiscoverCallbackContext;
+
+
 	@Override
 	public boolean execute(String action, JSONArray args,
 			CallbackContext callbackContext) {
@@ -78,7 +82,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 	}
 
 	void startDiscover(CallbackContext callbackContext) {
-
+		myDiscoverCallbackContext = callbackContext;
 		List<String> typeList = new ArrayList<String>();
 		typeList.add(type);
 
@@ -91,8 +95,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 		lpPrintDiscoverPrinter.setCallback(listener = new ServiceCallback());
 		// Starts discovery
 		try {
-			Context context = this.cordova.getActivity().getApplicationContext();
-			lpPrintDiscoverPrinter.startDiscover(context);
+			myDiscoverContext = this.cordova.getActivity().getApplicationContext();
+			lpPrintDiscoverPrinter.startDiscover(myDiscoverContext);
 		} catch (Exception e) {
 			callbackContext.error("Error starting discovery! ");
 		}
