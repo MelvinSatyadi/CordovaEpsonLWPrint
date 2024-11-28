@@ -31,6 +31,8 @@ import android.text.TextUtils;
 
 public class EpsonLWPrint extends CordovaPlugin {
 
+	public static final int REQUEST_BLUETOOTH_PERMISSION = 1;
+
 	private static final String SEP = System.getProperty("line.separator");
 	private String type = "_pdl-datastream._tcp.local.";
 
