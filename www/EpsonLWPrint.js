@@ -11,7 +11,7 @@ EpsonLWPrint.prototype.getDeviceList = function (fnSuccess, fnError) {
 }
 
 EpsonLWPrint.prototype.checkBT = function (fnSuccess, fnError) {
-  exec(fnSuccess, fnError, "EpsonLWPrint", "checkBT", []);
+  exec(fnSuccess, fnError, "EpsonLWPrint", "checkPermissions", []);
 }
 
 EpsonLWPrint.install = function () {

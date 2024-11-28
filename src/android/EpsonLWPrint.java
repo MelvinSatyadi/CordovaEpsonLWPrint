@@ -58,7 +58,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 			return true;
 			
 		} 
-		else if (action.equals("checkBT")) {
+		else if (action.equals("checkPermissions")) {
 			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(), android.Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED) {  
 				ActivityCompat.requestPermissions(
 					this.cordova.getActivity(),    
