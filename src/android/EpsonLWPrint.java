@@ -66,7 +66,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 					REQUEST_BLUETOOTH_PERMISSION
 				);
 			}
-			checkBTStatus(callbackContext);
+			callbackContext.success("True");
 			return true;
 		}
 		else {
