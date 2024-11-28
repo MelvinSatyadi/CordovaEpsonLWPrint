@@ -2,6 +2,7 @@ package com.melvinsatyadi.cordova.plugin;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
 
 //Epson libs
 import com.epson.lwprint.sdk.LWPrintDiscoverPrinter;
@@ -55,7 +56,20 @@ public class EpsonLWPrint extends CordovaPlugin {
 		} else if (action.equals("getDeviceList")) {
 			getDeviceList(callbackContext);
 			return true;
-		} else {
+			
+		} 
+		else if (action.equals("checkBT")) {
+			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(), android.Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED) {  
+				ActivityCompat.requestPermissions(
+					this.cordova.getActivity(),    
+					new String[] { android.Manifest.permission.BLUETOOTH_SCAN, android.Manifest.permission.BLUETOOTH_CONNECT },
+					REQUEST_BLUETOOTH_PERMISSION
+				);
+			}
+			checkBTStatus(callbackContext);
+			return true;
+		}
+		else {
 			callbackContext.error("\"" + action + "\" is not a recognized action.");
 			return false;
 		}

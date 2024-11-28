@@ -10,6 +10,10 @@ EpsonLWPrint.prototype.getDeviceList = function (fnSuccess, fnError) {
   exec(fnSuccess, fnError, "EpsonLWPrint", "getDeviceList", []);
 }
 
+EpsonLWPrint.prototype.checkBT = function (fnSuccess, fnError) {
+  exec(fnSuccess, fnError, "EpsonLWPrint", "checkBT", []);
+}
+
 EpsonLWPrint.install = function () {
   if (!window.plugins) {
     window.plugins = {};
