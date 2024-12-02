@@ -5,9 +5,19 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 
 //Epson libs
+import com.epson.lwprint.sdk.LWPrint;
 import com.epson.lwprint.sdk.LWPrintDiscoverPrinter;
 import com.epson.lwprint.sdk.LWPrintDiscoverPrinterCallback;
 import com.epson.lwprint.sdk.LWPrintDiscoverConnectionType;
+import com.epson.lwprint.sdk.LWPrintCallback;
+import com.epson.lwprint.sdk.LWPrintConnectionStatus;
+
+import com.epson.lwprint.sdk.LWPrintParameterKey;
+import com.epson.lwprint.sdk.LWPrintPrintingPhase;
+import com.epson.lwprint.sdk.LWPrintStatusError;
+import com.epson.lwprint.sdk.LWPrintTapeCut;
+import com.epson.lwprint.sdk.LWPrintTapeWidth;
+import com.epson.lwprint.sdk.LWPrintDataProvider;
 
 // Cordova-required packages
 import org.apache.cordova.CallbackContext;
@@ -19,17 +29,34 @@ import org.json.JSONObject;
 
 //java imports
 import java.util.Arrays;
+import java.util.Base64;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+//import java.util.logging.Handler;
 import java.util.EnumSet;
+import java.util.HashMap;
 
 //android imports
 import android.content.Context;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
 
 public class EpsonLWPrint extends CordovaPlugin {
+
+	LWPrint lwprint;
+	PrintCallback printListener;
+
+	Map<String, String> printerInfo = null;
+	Map<String, Integer> lwStatus = null;
 
 	public static final int REQUEST_BLUETOOTH_PERMISSION = 1;
 
@@ -42,11 +69,12 @@ public class EpsonLWPrint extends CordovaPlugin {
 	ServiceCallback listener;
 	LWPrintDiscoverPrinter lpPrintDiscoverPrinter;
 
+	SampleDataProvider sampleDataProvider;
+
 	android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
 
 	Context myDiscoverContext;
 	CallbackContext myDiscoverCallbackContext;
-
 
 	@Override
 	public boolean execute(String action, JSONArray args,
@@ -62,20 +90,22 @@ public class EpsonLWPrint extends CordovaPlugin {
 		} else if (action.equals("getDeviceList")) {
 			getDeviceList(callbackContext);
 			return true;
-			
-		} 
-		else if (action.equals("checkPermissions")) {
-			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(), android.Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED) {  
+
+		} else if (action.equals("checkPermissions")) {
+			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+					android.Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED) {
 				ActivityCompat.requestPermissions(
-					this.cordova.getActivity(),    
-					new String[] { android.Manifest.permission.BLUETOOTH_SCAN, android.Manifest.permission.BLUETOOTH_CONNECT },
-					REQUEST_BLUETOOTH_PERMISSION
-				);
+						this.cordova.getActivity(),
+						new String[] { android.Manifest.permission.BLUETOOTH_SCAN,
+								android.Manifest.permission.BLUETOOTH_CONNECT },
+						REQUEST_BLUETOOTH_PERMISSION);
+				callbackContext.success("Permission requested.");
+			} else {
+				callbackContext.success("Already granted!");
 			}
-			callbackContext.success("True");
+
 			return true;
-		}
-		else {
+		} else {
 			callbackContext.error("\"" + action + "\" is not a recognized action.");
 			return false;
 		}
@@ -108,15 +138,207 @@ public class EpsonLWPrint extends CordovaPlugin {
 		for (DeviceInfo info : deviceList) {
 			JSONObject jsonObj = new JSONObject();
 			try {
-				jsonObj.put("name", info.getName());
-				jsonObj.put("host", info.getHost());
-				jsonObj.put("mac", info.getMacaddress());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_NAME, info.getName());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_HOST, info.getHost());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_SERIAL_NUMBER, info.getMacaddress());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_PRODUCT, info.getProduct());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_USBMDL, info.getUsbmdl());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_PORT, info.getPort());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_TYPE, info.getType());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_DOMAIN, info.getDomain());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_DEVICE_CLASS, info.getDeviceClass());
+				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_DEVICE_STATUS, info.getDeviceStatus());
 			} catch (JSONException e) {
 
 			}
 			json.put(jsonObj);
 		}
 		callbackContext.success(json.toString());
+	}
+
+	void setPrinterInfo(CallbackContext callbackContext, String printerInfoJSON) {
+		if (printerInfo != null) {
+			printerInfo.clear();
+			printerInfo = null;
+		}
+		printerInfo = new HashMap<String, String>();
+		printerInfo.put(printerInfoJSON, printerInfoJSON);
+		callbackContext.success("Printer info is set!");
+	}
+
+	void printText(CallbackContext callbackContext, String textToPrint) {
+
+		if (printerInfo == null) {
+			callbackContext.error("Printer info not set!");
+			return;
+		}
+
+		final Context self = this.cordova.getContext();
+
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				Boolean printResult;
+
+				// Set printing information
+				lwprint.setPrinterInformation(printerInfo);
+
+				// Obtain printing status
+				lwStatus = lwprint.fetchPrinterStatus();
+				int deviceError = lwprint.getDeviceErrorFromStatus(lwStatus);
+				if (lwStatus.isEmpty() || (deviceError == LWPrintStatusError.ConnectionFailed)) {
+					printResult = false;
+				} else {
+					// Make a print parameter
+					int tapeWidth = lwprint.getTapeWidthFromStatus(lwStatus);
+
+					Map<String, Object> printParameter = new HashMap<String, Object>();
+					// Number of copies(1 ... 99)
+					printParameter.put(LWPrintParameterKey.Copies, 1);
+					// Tape cut method(LWPrintTapeCut)
+					printParameter.put(LWPrintParameterKey.TapeCut, LWPrintTapeCut.EachLabel);
+					// Set half cut (true:half cut on)
+					printParameter.put(LWPrintParameterKey.HalfCut, lwprint.isSupportHalfCut());
+					// Low speed print setting (true:low speed print on)
+					printParameter.put(LWPrintParameterKey.PrintSpeed, false);
+					// Print density(-5 ... 5)
+					printParameter.put(LWPrintParameterKey.Density, 0);
+					// Tape width(LWPrintTapeWidth)
+					printParameter.put(LWPrintParameterKey.TapeWidth, tapeWidth);
+
+					sampleDataProvider.setFormType(FormType.String);
+					sampleDataProvider.setStringData(textToPrint);
+					lwprint.doPrint(sampleDataProvider, printParameter);
+
+					printResult = true;
+				}
+
+				final Boolean result = printResult;
+				new Handler(Looper.getMainLooper()).post(new Runnable() {
+					@Override
+					public void run() {
+						if (result == false) {
+							// setProcessing(false);
+
+							String message = "Can't get printer status.";
+							callbackContext.error(message);
+							// alertAbortOperation("Error", message);
+						} else {
+							callbackContext.success("Print success");
+						}
+					}
+				});
+			}
+		});
+		// callbackContext.success("");
+	}
+
+	void printImage(CallbackContext callbackContext, String imageBase64) {
+		Bitmap imageToPrint = decodeBase64(imageBase64);
+
+		if (printerInfo == null) {
+			callbackContext.error("Printer info not set!");
+			return;
+		}
+		final Context self = this.cordova.getContext();
+
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				Boolean printResult;
+
+				// Set printing information
+				lwprint.setPrinterInformation(printerInfo);
+
+				// Obtain printing status
+				lwStatus = lwprint.fetchPrinterStatus();
+				int deviceError = lwprint.getDeviceErrorFromStatus(lwStatus);
+				if (lwStatus.isEmpty() || (deviceError == LWPrintStatusError.ConnectionFailed)) {
+					printResult = false;
+				} else {
+					// Make a print parameter
+					int tapeWidth = lwprint.getTapeWidthFromStatus(lwStatus);
+
+					Map<String, Object> printParameter = new HashMap<String, Object>();
+					// Number of copies(1 ... 99)
+					printParameter.put(LWPrintParameterKey.Copies, 1);
+					// Tape cut method(LWPrintTapeCut)
+					printParameter.put(LWPrintParameterKey.TapeCut, LWPrintTapeCut.EachLabel);
+					// Set half cut (true:half cut on)
+					printParameter.put(LWPrintParameterKey.HalfCut, lwprint.isSupportHalfCut());
+					// Low speed print setting (true:low speed print on)
+					printParameter.put(LWPrintParameterKey.PrintSpeed, false);
+					// Print density(-5 ... 5)
+					printParameter.put(LWPrintParameterKey.Density, 0);
+					// Tape width(LWPrintTapeWidth)
+					printParameter.put(LWPrintParameterKey.TapeWidth, tapeWidth);
+
+					if (imageToPrint != null) {
+						lwprint.doPrint(imageToPrint, printParameter);
+					}
+					/*
+					 * String item = spinnerData.getSelectedItem().toString();
+					 * 
+					 * switch (item) {
+					 * case "Text":
+					 * sampleDataProvider.setFormType(FormType.String);
+					 * lwprint.doPrint(sampleDataProvider, printParameter);
+					 * break;
+					 * case "QRCode":
+					 * sampleDataProvider.setFormType(FormType.QRCode);
+					 * lwprint.doPrint(sampleDataProvider, printParameter);
+					 * break;
+					 * case "Img1":
+					 * Bitmap bitmap1 = createBitmap("Hello Tape:1");
+					 * lwprint.doPrint(bitmap1, printParameter);
+					 * break;
+					 * case "Img2":
+					 * Bitmap bitmap2 = createBitmap("Hello Tape:2");
+					 * lwprint.doPrint(bitmap2, printParameter);
+					 * break;
+					 * case "Imgs":
+					 * Bitmap bitmap3 = createBitmap("Hello Tape:1");
+					 * Bitmap bitmap4 = createBitmap("Hello Tape:2");
+					 * 
+					 * if (bitmap3 != null && bitmap4 != null) {
+					 * ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>(
+					 * Arrays.asList(bitmap3, bitmap4)
+					 * );
+					 * lwprint.doPrint(bitmaps, printParameter);
+					 * }
+					 * break;
+					 * default:
+					 * break;
+					 * }
+					 */
+					printResult = true;
+				}
+
+				final Boolean result = printResult;
+				new Handler(Looper.getMainLooper()).post(new Runnable() {
+					@Override
+					public void run() {
+						if (result == false) {
+							// setProcessing(false);
+
+							String message = "Can't get printer status.";
+							callbackContext.error(message);
+							// alertAbortOperation("Error", message);
+						} else {
+							callbackContext.success("Print success");
+						}
+					}
+				});
+			}
+		});
+		// callbackContext.success("");
+	}
+
+	public static Bitmap decodeBase64(String input) {
+		byte[] decodedBytes = Base64.getDecoder().decode(input.getBytes());;
+		return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
 	}
 
 	class ServiceCallback implements LWPrintDiscoverPrinterCallback {
@@ -235,6 +457,253 @@ public class EpsonLWPrint extends CordovaPlugin {
 				deviceList.remove(index);
 			}
 		}
-		
+
 	}
+
+	public enum FormType {
+		String,
+		QRCode;
+	}
+
+	class SampleDataProvider implements LWPrintDataProvider {
+
+		private static final String FORM_DATA_STRING = "FormDataString.plist";
+		private static final String FORM_DATA_QRCODE = "FormDataQRCode.plist";
+
+		private FormType formType = FormType.String;
+		private String stringData = "String";
+		private String qrCodeData = "QRCode";
+
+		InputStream formDataStringInputStream;
+		InputStream formDataQRCodeInputStream;
+
+		public FormType getFormType() {
+			return formType;
+		}
+
+		public void setFormType(FormType formType) {
+			this.formType = formType;
+		}
+
+		public String getStringData() {
+			return stringData;
+		}
+
+		public void setStringData(String stringData) {
+			this.stringData = stringData;
+		}
+
+		public String getQrCodeData() {
+			return qrCodeData;
+		}
+
+		public void setQrCodeData(String qrCodeData) {
+			this.qrCodeData = qrCodeData;
+		}
+
+		public void closeStreams() {
+			if (formDataStringInputStream != null) {
+				try {
+					formDataStringInputStream.close();
+				} catch (IOException e) {
+					// //Logger.e(e.toString(), e);
+				}
+				formDataStringInputStream = null;
+			}
+			if (formDataQRCodeInputStream != null) {
+				try {
+					formDataQRCodeInputStream.close();
+				} catch (IOException e) {
+					// //Logger.e(e.toString(), e);
+				}
+				formDataQRCodeInputStream = null;
+			}
+		}
+
+		@Override
+		public void startOfPrint() {
+			// It is called only once when printing started
+			//Logger.d("startOfPrint");
+		}
+
+		@Override
+		public void endOfPrint() {
+			// It is called only once when printing finished
+			//Logger.d("endOfPrint");
+		}
+
+		@Override
+		public void startPage() {
+			// It is called when starting a page
+			//Logger.d("startPage");
+		}
+
+		@Override
+		public void endPage() {
+			// It is called when finishing a page
+			//Logger.d("endPage");
+		}
+
+		@Override
+		public int getNumberOfPages() {
+			// Return all pages printed
+			//Logger.d("getNumberOfPages");
+
+			return 1;
+		}
+
+		@Override
+		public InputStream getFormDataForPage(int pageIndex) {
+			InputStream formData = null;
+			// Return the form data for pageIndex page
+			//Logger.d("getFormDataForPage: pageIndex=" + pageIndex);
+			/* 
+			InputStream formData = null;
+
+			switch (formType) {
+			case String:
+				//Logger.d("Stinrg: pageIndex=" + pageIndex);
+				if (formDataStringInputStream != null) {
+					try {
+						formDataStringInputStream.close();
+					} catch (IOException e) {
+						//Logger.e(e.toString(), e);
+					}
+					formDataStringInputStream = null;
+				}
+				try {
+					AssetManager as = getResources().getAssets();
+					formDataStringInputStream = as.open(FORM_DATA_STRING);
+					formData = formDataStringInputStream;
+					//Logger.d("getFormDataForPage: " + FORM_DATA_STRING + "=" + formDataStringInputStream.available());
+				} catch (IOException e) {
+					//Logger.e(e.toString(), e);
+				}
+				break;
+			case QRCode:
+				//Logger.d("QRCode: pageIndex=" + pageIndex);
+				if (formDataQRCodeInputStream != null) {
+					try {
+						formDataQRCodeInputStream.close();
+					} catch (IOException e) {
+						//Logger.e(e.toString(), e);
+					}
+					formDataQRCodeInputStream = null;
+				}
+				try {
+					AssetManager as = getResources().getAssets();
+					formDataQRCodeInputStream = as.open(FORM_DATA_QRCODE);
+					formData = formDataQRCodeInputStream;
+					//Logger.d("getFormDataForPage: " + FORM_DATA_QRCODE + "=" + formDataStringInputStream.available());
+				} catch (IOException e) {
+					//Logger.e(e.toString(), e);
+				}
+				break;
+			}
+			*/
+			return formData;
+		}
+
+		@Override
+		public Bitmap getBitmapContentData(String contentName, int pageIndex) {
+			// Return the data for the contentName of the pageIndex page
+			////Logger.d("getBitmapContentData: contentName=" + contentName
+			//				+ ", pageIndex=" + pageIndex);
+
+			return null;
+		}
+
+		@Override
+		public String getStringContentData(String contentName, int pageIndex) {
+			// Return the data for the contentName of the pageIndex page
+			////Logger.d("getStringContentData: contentName=" + contentName
+			//				+ ", pageIndex=" + pageIndex);
+
+			if ("String".equals(contentName)) {
+				return stringData;
+			} else if ("QRCode".equals(contentName)) {
+				return qrCodeData;
+			}
+
+			return null;
+		}
+
+	}
+
+	
+	class PrintCallback implements LWPrintCallback {
+
+		@Override
+		public void onChangePrintOperationPhase(LWPrint lWPrint, int phase) {
+			// Report the change of a printing phase
+			////Logger.d("onChangePrintOperationPhase: phase=" + phase);
+			String jobPhase = "";
+			switch (phase) {
+			case LWPrintPrintingPhase.Prepare:
+				jobPhase = "PrintingPhasePrepare";
+				break;
+			case LWPrintPrintingPhase.Processing:
+				jobPhase = "PrintingPhaseProcessing";
+				break;
+			case LWPrintPrintingPhase.WaitingForPrint:
+				jobPhase = "PrintingPhaseWaitingForPrint";
+				break;
+			case LWPrintPrintingPhase.Complete:
+				jobPhase = "PrintingPhaseComplete";
+				//printComplete(LWPrintConnectionStatus.NoError, LWPrintStatusError.NoError, false);
+				//setProcessing(false);
+				break;
+			default:
+				//setProcessing(false);
+				break;
+			}
+			////Logger.d("phase=" + jobPhase);
+		}
+
+		@Override
+		public void onChangeTapeFeedOperationPhase(LWPrint lWPrint, int phase) {
+			// Called when tape feed and tape cutting state transitions
+			////Logger.d("onChangeTapeFeedOperationPhase: phase=" + phase);
+		}
+
+		@Override
+		public void onAbortPrintOperation(LWPrint lWPrint, int errorStatus,
+				int deviceStatus) {
+			// It is called when undergoing a transition to the printing cancel operation due to a printing error
+			////Logger.d("onAbortPrintOperation: errorStatus=" + errorStatus
+			//				+ ", deviceStatus=" + deviceStatus);
+
+			//printComplete(errorStatus, deviceStatus, false);
+
+			
+			//setProcessing(false);
+
+			String message = "Error Status : " + errorStatus
+					+ "\nDevice Status : " + Integer.toHexString(deviceStatus);
+			//alertAbortOperation("Print Error!", message);
+		}
+
+		@Override
+		public void onSuspendPrintOperation(LWPrint lWPrint, int errorStatus,
+				int deviceStatus) {
+			// It is called when undergoing a transition to the printing restart operation due to a printing error
+			////Logger.d("onSuspendPrintOperation: errorStatus=" + errorStatus
+			//				+ ", deviceStatus=" + deviceStatus);
+
+			//printComplete(errorStatus, deviceStatus, true);
+
+			String message = "Error Status : " + errorStatus
+					+ "\nDevice Status : " + Integer.toHexString(deviceStatus);
+			//alertSuspendPrintOperation("Print Error! re-print ?", message);
+		}
+
+		@Override
+		public void onAbortTapeFeedOperation(LWPrint lWPrint, int errorStatus,
+				int deviceStatus) {
+			// Called when tape feed and tape cutting stops due to an error
+			////Logger.d("errorStatus=" + errorStatus + ", deviceStatus=" + deviceStatus);
+		}
+
+	}
+
 }
