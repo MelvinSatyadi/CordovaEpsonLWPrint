@@ -105,7 +105,21 @@ public class EpsonLWPrint extends CordovaPlugin {
 			}
 
 			return true;
-		} else {
+		} else if (action.equals("printImage")) {
+			String base64 = args.getString(0);
+			printImage(callbackContext, base64);
+			return true;
+		} else if (action.equals("printText")) {
+			String text = args.getString(0);
+			printText(callbackContext, text);
+			return true;
+		} 
+		else if (action.equals("setPrinterInfo")) {
+			String infoJSON = args.getString(0);
+			setPrinterInfo(callbackContext, infoJSON);
+			return true;
+		}
+		else {
 			callbackContext.error("\"" + action + "\" is not a recognized action.");
 			return false;
 		}

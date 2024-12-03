@@ -22,6 +22,10 @@ EpsonLWPrint.prototype.printImage = function(fnSuccess, fnError, imageBase64){
   exec(fnSuccess, fnError, "EpsonLWPrint", "printImage",[imageBase64]);
 }
 
+EpsonLWPrint.prototype.printText = function(fnSuccess, fnError, textToPrint){
+  exec(fnSuccess, fnError, "EpsonLWPrint", "printText",[textToPrint]);
+}
+
 EpsonLWPrint.install = function () {
   if (!window.plugins) {
     window.plugins = {};
