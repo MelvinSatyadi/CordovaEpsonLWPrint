@@ -52,8 +52,7 @@ import android.os.Handler;
 
 public class EpsonLWPrint extends CordovaPlugin {
 
-	LWPrint lwprint;
-	PrintCallback printListener;
+	
 
 	Map<String, String> printerInfo = null;
 	Map<String, Integer> lwStatus = null;
@@ -193,14 +192,18 @@ public class EpsonLWPrint extends CordovaPlugin {
 	}
 
 	void printText(CallbackContext callbackContext, String textToPrint) {
-
 		if (printerInfo == null) {
 			callbackContext.error("Printer info not set!");
 			return;
 		}
-
+		
 		final Context self = this.cordova.getContext();
+		LWPrint lwprint = new LWPrint(self);
+		PrintCallback printListener = new PrintCallback();
 
+		lwprint.setCallback(printListener);
+
+	
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		executor.execute(new Runnable() {
 			@Override
