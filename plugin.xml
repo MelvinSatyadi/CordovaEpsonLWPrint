@@ -48,6 +48,8 @@
             target-dir="src/com/melvinsatyadi/cordova/plugin" />
         <source-file src="src/android/DeviceInfo.java"
             target-dir="src/com/melvinsatyadi/cordova/plugin" />
+        <source-file src="src/android/Logger.java"
+            target-dir="src/com/melvinsatyadi/cordova/plugin" />
 
         <source-file src="src/android/libs/LWPrint.jar" target-dir="libs" />
         <source-file src="src/android/libs/json.jar" target-dir="libs" />

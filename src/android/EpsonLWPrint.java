@@ -50,6 +50,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.bluetooth.BluetoothAdapter;
+import android.content.res.AssetManager;
 
 public class EpsonLWPrint extends CordovaPlugin {
 
@@ -546,7 +547,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 				try {
 					formDataStringInputStream.close();
 				} catch (IOException e) {
-					// //Logger.e(e.toString(), e);
+					// Logger.e(e.toString(), e);
 				}
 				formDataStringInputStream = null;
 			}
@@ -554,7 +555,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 				try {
 					formDataQRCodeInputStream.close();
 				} catch (IOException e) {
-					// //Logger.e(e.toString(), e);
+					// Logger.e(e.toString(), e);
 				}
 				formDataQRCodeInputStream = null;
 			}
@@ -563,31 +564,31 @@ public class EpsonLWPrint extends CordovaPlugin {
 		@Override
 		public void startOfPrint() {
 			// It is called only once when printing started
-			//Logger.d("startOfPrint");
+			Logger.d("startOfPrint");
 		}
 
 		@Override
 		public void endOfPrint() {
 			// It is called only once when printing finished
-			//Logger.d("endOfPrint");
+			Logger.d("endOfPrint");
 		}
 
 		@Override
 		public void startPage() {
 			// It is called when starting a page
-			//Logger.d("startPage");
+			Logger.d("startPage");
 		}
 
 		@Override
 		public void endPage() {
 			// It is called when finishing a page
-			//Logger.d("endPage");
+			Logger.d("endPage");
 		}
 
 		@Override
 		public int getNumberOfPages() {
 			// Return all pages printed
-			//Logger.d("getNumberOfPages");
+			Logger.d("getNumberOfPages");
 
 			return 1;
 		}
@@ -595,19 +596,19 @@ public class EpsonLWPrint extends CordovaPlugin {
 		@Override
 		public InputStream getFormDataForPage(int pageIndex) {
 			InputStream formData = null;
-			// Return the form data for pageIndex page
-			//Logger.d("getFormDataForPage: pageIndex=" + pageIndex);
 			/* 
-			InputStream formData = null;
+			// Return the form data for pageIndex page
+			Logger.d("getFormDataForPage: pageIndex=" + pageIndex);
+			
 
 			switch (formType) {
 			case String:
-				//Logger.d("Stinrg: pageIndex=" + pageIndex);
+				Logger.d("Stinrg: pageIndex=" + pageIndex);
 				if (formDataStringInputStream != null) {
 					try {
 						formDataStringInputStream.close();
 					} catch (IOException e) {
-						//Logger.e(e.toString(), e);
+						Logger.e(e.toString(), e);
 					}
 					formDataStringInputStream = null;
 				}
@@ -615,18 +616,18 @@ public class EpsonLWPrint extends CordovaPlugin {
 					AssetManager as = getResources().getAssets();
 					formDataStringInputStream = as.open(FORM_DATA_STRING);
 					formData = formDataStringInputStream;
-					//Logger.d("getFormDataForPage: " + FORM_DATA_STRING + "=" + formDataStringInputStream.available());
+					Logger.d("getFormDataForPage: " + FORM_DATA_STRING + "=" + formDataStringInputStream.available());
 				} catch (IOException e) {
-					//Logger.e(e.toString(), e);
+					Logger.e(e.toString(), e);
 				}
 				break;
 			case QRCode:
-				//Logger.d("QRCode: pageIndex=" + pageIndex);
+				Logger.d("QRCode: pageIndex=" + pageIndex);
 				if (formDataQRCodeInputStream != null) {
 					try {
 						formDataQRCodeInputStream.close();
 					} catch (IOException e) {
-						//Logger.e(e.toString(), e);
+						Logger.e(e.toString(), e);
 					}
 					formDataQRCodeInputStream = null;
 				}
@@ -634,9 +635,9 @@ public class EpsonLWPrint extends CordovaPlugin {
 					AssetManager as = getResources().getAssets();
 					formDataQRCodeInputStream = as.open(FORM_DATA_QRCODE);
 					formData = formDataQRCodeInputStream;
-					//Logger.d("getFormDataForPage: " + FORM_DATA_QRCODE + "=" + formDataStringInputStream.available());
+					Logger.d("getFormDataForPage: " + FORM_DATA_QRCODE + "=" + formDataStringInputStream.available());
 				} catch (IOException e) {
-					//Logger.e(e.toString(), e);
+					Logger.e(e.toString(), e);
 				}
 				break;
 			}
@@ -647,8 +648,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 		@Override
 		public Bitmap getBitmapContentData(String contentName, int pageIndex) {
 			// Return the data for the contentName of the pageIndex page
-			////Logger.d("getBitmapContentData: contentName=" + contentName
-			//				+ ", pageIndex=" + pageIndex);
+			Logger.d("getBitmapContentData: contentName=" + contentName
+							+ ", pageIndex=" + pageIndex);
 
 			return null;
 		}
@@ -656,8 +657,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 		@Override
 		public String getStringContentData(String contentName, int pageIndex) {
 			// Return the data for the contentName of the pageIndex page
-			////Logger.d("getStringContentData: contentName=" + contentName
-			//				+ ", pageIndex=" + pageIndex);
+			Logger.d("getStringContentData: contentName=" + contentName
+							+ ", pageIndex=" + pageIndex);
 
 			if ("String".equals(contentName)) {
 				return stringData;
@@ -676,7 +677,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		@Override
 		public void onChangePrintOperationPhase(LWPrint lWPrint, int phase) {
 			// Report the change of a printing phase
-			////Logger.d("onChangePrintOperationPhase: phase=" + phase);
+			Logger.d("onChangePrintOperationPhase: phase=" + phase);
 			String jobPhase = "";
 			switch (phase) {
 			case LWPrintPrintingPhase.Prepare:
@@ -697,21 +698,21 @@ public class EpsonLWPrint extends CordovaPlugin {
 				//setProcessing(false);
 				break;
 			}
-			////Logger.d("phase=" + jobPhase);
+			Logger.d("phase=" + jobPhase);
 		}
 
 		@Override
 		public void onChangeTapeFeedOperationPhase(LWPrint lWPrint, int phase) {
 			// Called when tape feed and tape cutting state transitions
-			////Logger.d("onChangeTapeFeedOperationPhase: phase=" + phase);
+			Logger.d("onChangeTapeFeedOperationPhase: phase=" + phase);
 		}
 
 		@Override
 		public void onAbortPrintOperation(LWPrint lWPrint, int errorStatus,
 				int deviceStatus) {
 			// It is called when undergoing a transition to the printing cancel operation due to a printing error
-			////Logger.d("onAbortPrintOperation: errorStatus=" + errorStatus
-			//				+ ", deviceStatus=" + deviceStatus);
+			Logger.d("onAbortPrintOperation: errorStatus=" + errorStatus
+							+ ", deviceStatus=" + deviceStatus);
 
 			//printComplete(errorStatus, deviceStatus, false);
 
@@ -727,8 +728,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 		public void onSuspendPrintOperation(LWPrint lWPrint, int errorStatus,
 				int deviceStatus) {
 			// It is called when undergoing a transition to the printing restart operation due to a printing error
-			////Logger.d("onSuspendPrintOperation: errorStatus=" + errorStatus
-			//				+ ", deviceStatus=" + deviceStatus);
+			Logger.d("onSuspendPrintOperation: errorStatus=" + errorStatus
+							+ ", deviceStatus=" + deviceStatus);
 
 			//printComplete(errorStatus, deviceStatus, true);
 
@@ -741,7 +742,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		public void onAbortTapeFeedOperation(LWPrint lWPrint, int errorStatus,
 				int deviceStatus) {
 			// Called when tape feed and tape cutting stops due to an error
-			////Logger.d("errorStatus=" + errorStatus + ", deviceStatus=" + deviceStatus);
+			Logger.d("errorStatus=" + errorStatus + ", deviceStatus=" + deviceStatus);
 		}
 
 	}
