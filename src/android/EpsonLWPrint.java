@@ -175,9 +175,21 @@ public class EpsonLWPrint extends CordovaPlugin {
 			printerInfo.clear();
 			printerInfo = null;
 		}
+
+		String printerInfoJSONClean = printerInfoJSON.replace("{", "");
+		printerInfoJSONClean = printerInfoJSONClean.replace("}", "");
+		printerInfoJSONClean = printerInfoJSONClean.replace("[", "");
+		printerInfoJSONClean = printerInfoJSONClean.replace("]", "");
+
 		printerInfo = new HashMap<String, String>();
-		printerInfo.put(printerInfoJSON, printerInfoJSON);
-		callbackContext.success("Printer info is set!");
+		String[] pairs = printerInfoJSONClean.split(",");
+		for (int i = 0; i < pairs.length; i++){
+			String pair = pairs[i];
+			String[] keyValue = pair.split(":");
+			printerInfo.put(keyValue[0], keyValue[1]);
+		}
+
+		callbackContext.success("Printer info is set! " + printerInfo.toString());
 	}
 
 	void printText(CallbackContext callbackContext, String textToPrint) {
