@@ -270,7 +270,13 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.error("Printer info not set!");
 			return;
 		}
+		
 		final Context self = this.cordova.getContext();
+		LWPrint lwprint = new LWPrint(self);
+		PrintCallback printListener = new PrintCallback();
+
+		lwprint.setCallback(printListener);
+
 
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		executor.execute(new Runnable() {
