@@ -78,7 +78,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	@Override
 	public boolean execute(String action, JSONArray args,
-			CallbackContext callbackContext) {
+			CallbackContext callbackContext) throws JSONException {
 		// Verify that the user sent a 'show' action
 		if (action.equals("startDiscover")) {
 			startDiscover(callbackContext);
