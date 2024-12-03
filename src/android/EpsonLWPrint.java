@@ -68,7 +68,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 	ServiceCallback listener;
 	LWPrintDiscoverPrinter lpPrintDiscoverPrinter;
 
-	SampleDataProvider sampleDataProvider;
+	
 
 	android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
 
@@ -203,6 +203,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 		lwprint.setCallback(printListener);
 
+		SampleDataProvider sampleDataProvider = new SampleDataProvider();
+
 	
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		executor.execute(new Runnable() {
@@ -270,12 +272,14 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.error("Printer info not set!");
 			return;
 		}
-		
+
 		final Context self = this.cordova.getContext();
 		LWPrint lwprint = new LWPrint(self);
 		PrintCallback printListener = new PrintCallback();
 
 		lwprint.setCallback(printListener);
+
+		SampleDataProvider sampleDataProvider = new SampleDataProvider();
 
 
 		ExecutorService executor = Executors.newSingleThreadExecutor();
