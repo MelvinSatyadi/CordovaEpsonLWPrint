@@ -49,6 +49,7 @@ import android.text.TextUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.bluetooth.BluetoothAdapter;
 
 public class EpsonLWPrint extends CordovaPlugin {
 
@@ -256,7 +257,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 							callbackContext.error(message);
 							// alertAbortOperation("Error", message);
 						} else {
-							callbackContext.success("Print success");
+							callbackContext.success("Print success " + textToPrint);
 						}
 					}
 				});
