@@ -596,6 +596,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		@Override
 		public InputStream getFormDataForPage(int pageIndex) {
 			InputStream formData = null;
+			Logger.d("getFormDataForPage : Something should be happening here");
 			/* 
 			// Return the form data for pageIndex page
 			Logger.d("getFormDataForPage: pageIndex=" + pageIndex);
