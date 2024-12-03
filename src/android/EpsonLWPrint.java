@@ -185,7 +185,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		for (int i = 0; i < pairs.length; i++){
 			String pair = pairs[i];
 			String[] keyValue = pair.split(":");
-			printerInfo.put(keyValue[0], keyValue[1].replace("\\", ":"));
+			printerInfo.put(keyValue[0], keyValue[1].replace("\\\\", ":"));
 		}
 
 		callbackContext.success("Printer info is set! " + printerInfo.toString());
