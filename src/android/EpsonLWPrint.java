@@ -257,7 +257,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 							callbackContext.error(message);
 							// alertAbortOperation("Error", message);
 						} else {
-							callbackContext.success("Print success " + textToPrint);
+							callbackContext.success("Print success " + textToPrint + " " + lwStatus.toString());
 						}
 					}
 				});
