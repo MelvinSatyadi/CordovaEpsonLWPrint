@@ -52,7 +52,7 @@ import android.os.Handler;
 
 public class EpsonLWPrint extends CordovaPlugin {
 
-	LWPrint lwprint = new LWPrint(this.cordova.getContext());
+	LWPrint lwprint;
 	PrintCallback printListener;
 
 	Map<String, String> printerInfo = null;
