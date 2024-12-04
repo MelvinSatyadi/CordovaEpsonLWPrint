@@ -107,6 +107,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 			return true;
 		} else if (action.equals("printImage")) {
+			Logger.d("Called printImage");
+			Logger.d(args.getString(0));
 			String base64 = args.getString(0);
 			printImage(callbackContext, base64);
 			return true;
