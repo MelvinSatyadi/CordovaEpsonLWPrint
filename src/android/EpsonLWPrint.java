@@ -87,6 +87,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.success("Discover Started");
 			return true;
 		} else if (action.equals("stopDiscover")) {
+			stopDiscover(callbackContext);
 			callbackContext.success("\"" + action + "\" not implemented yet.");
 			return true;
 		} else if (action.equals("debugLog")) {
@@ -167,10 +168,19 @@ public class EpsonLWPrint extends CordovaPlugin {
 		callbackContext.success();
 	}
 
+	void stopDiscover(CallbackContext callbackContext) {
+		try {
+			lpPrintDiscoverPrinter.stopDiscover();
+		} catch (Exception e) {
+			callbackContext.error("Error stopping discovery! ");
+		}
+		callbackContext.success();
+	}
+
 	void getDeviceList(CallbackContext callbackContext) {
 		JSONArray json = new JSONArray();
 		for (DeviceInfo info : deviceList) {
-			Logger.d(info.toString());
+			
 			JSONObject jsonObj = new JSONObject();
 			try {
 				jsonObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_NAME, info.getName());
@@ -415,7 +425,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		public void onFindPrinter(LWPrintDiscoverPrinter discoverPrinter,
 				Map<String, String> printer) {
 			// Called when printers are detected
-
+					Logger.d(printer.toString());
 			for (DeviceInfo info : deviceList) {
 				if (info.getName().equals(printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME))
 						&& info.getHost().equals(printer.get(LWPrintDiscoverPrinter.PRINTER_INFO_HOST))

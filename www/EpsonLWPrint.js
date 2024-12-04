@@ -6,6 +6,10 @@ EpsonLWPrint.prototype.startDiscover = function (fnSuccess, fnError) {
   exec(fnSuccess, fnError, "EpsonLWPrint", "startDiscover", []);
 }
 
+EpsonLWPrint.prototype.stopDiscover = function (fnSuccess, fnError) {
+  exec(fnSuccess, fnError, "EpsonLWPrint", "stopDiscover", []);
+}
+
 EpsonLWPrint.prototype.getDeviceList = function (fnSuccess, fnError) {
   exec(fnSuccess, fnError, "EpsonLWPrint", "getDeviceList", []);
 }
