@@ -318,8 +318,6 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 		lwprint.setCallback(printListener);
 
-		SampleDataProvider sampleDataProvider = new SampleDataProvider();
-
 
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		executor.execute(new Runnable() {
@@ -328,11 +326,14 @@ public class EpsonLWPrint extends CordovaPlugin {
 				Boolean printResult;
 
 				// Set printing information
+				Logger.d("Setting printer information : " + printerInfo.toString());
 				lwprint.setPrinterInformation(printerInfo);
 
 				// Obtain printing status
 				lwStatus = lwprint.fetchPrinterStatus();
+				Logger.d("Get printer status : " + lwStatus.toString());
 				int deviceError = lwprint.getDeviceErrorFromStatus(lwStatus);
+				Logger.d("Get printer error : " + deviceError);
 				if (lwStatus.isEmpty() || (deviceError == LWPrintStatusError.ConnectionFailed)) {
 					printResult = false;
 				} else {
@@ -352,7 +353,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 					printParameter.put(LWPrintParameterKey.Density, 0);
 					// Tape width(LWPrintTapeWidth)
 					printParameter.put(LWPrintParameterKey.TapeWidth, tapeWidth);
-
+					
+					Logger.d("Print parameter : " + printParameter.toString());
 					if (imageToPrint != null) {
 						lwprint.doPrintImage(imageToPrint, printParameter);
 					}
