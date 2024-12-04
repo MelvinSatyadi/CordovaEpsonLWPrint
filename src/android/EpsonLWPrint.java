@@ -268,6 +268,9 @@ public class EpsonLWPrint extends CordovaPlugin {
 	}
 
 	void printImage(CallbackContext callbackContext, String imageBase64) {
+		Logger.d("Running printImage");
+		
+		Logger.d("Image Base64 snippet is : " + imageBase64.substring(0, 50));
 		Bitmap imageToPrint = decodeBase64(imageBase64);
 
 		if (printerInfo == null) {
