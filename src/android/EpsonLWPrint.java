@@ -170,8 +170,10 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	void stopDiscover(CallbackContext callbackContext) {
 		try {
+			Logger.d("stopping discovery")
 			lpPrintDiscoverPrinter.stopDiscover();
 		} catch (Exception e) {
+			Logger.d("Error stopping discovery")
 			callbackContext.error("Error stopping discovery! ");
 		}
 		callbackContext.success();
