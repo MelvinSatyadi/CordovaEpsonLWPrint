@@ -60,6 +60,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 	Map<String, Integer> lwStatus = null;
 
 	public static final int REQUEST_BLUETOOTH_PERMISSION = 1;
+	public static final int REQUEST_LOCATION = 1;
 
 	private static final String SEP = System.getProperty("line.separator");
 	private String type = "_pdl-datastream._tcp.local.";
@@ -108,6 +109,19 @@ public class EpsonLWPrint extends CordovaPlugin {
 			} else {
 				callbackContext.success("Already granted!");
 			}
+
+			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+			android.Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED) {
+		ActivityCompat.requestPermissions(
+				this.cordova.getActivity(),
+				new String[] { android.Manifest.permission.ACCESS_FINE_LOCATION },
+				REQUEST_LOCATION);
+		callbackContext.success("Permission requested.");
+	} else {
+		callbackContext.success("Already granted!");
+	}
+
+		
 
 			return true;
 		} else if (action.equals("printImage")) {
