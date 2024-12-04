@@ -29,7 +29,6 @@ import org.json.JSONObject;
 
 //java imports
 import java.util.Arrays;
-import java.util.Base64;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,6 +50,7 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.bluetooth.BluetoothAdapter;
 import android.content.res.AssetManager;
+import android.util.Base64;
 
 public class EpsonLWPrint extends CordovaPlugin {
 
@@ -112,7 +112,6 @@ public class EpsonLWPrint extends CordovaPlugin {
 			return true;
 		} else if (action.equals("printImage")) {
 			Logger.d("Called printImage");
-			Logger.d(args.getString(0));
 			String base64 = args.getString(0);
 			printImage(callbackContext, base64);
 			return true;
@@ -277,7 +276,11 @@ public class EpsonLWPrint extends CordovaPlugin {
 		Logger.d("Running printImage");
 		
 		Logger.d("Image Base64 snippet is : " + imageBase64.substring(0, 50));
-		Bitmap imageToPrint = decodeBase64(imageBase64);
+
+		final byte[] decodedBytes = Base64.decode(imageBase64, Base64.DEFAULT);
+		Bitmap imageToPrint = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+
+		Logger.d(imageToPrint.toString());
 
 		if (printerInfo == null) {
 			callbackContext.error("Printer info not set!");
@@ -310,7 +313,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 				} else {
 					// Make a print parameter
 					int tapeWidth = lwprint.getTapeWidthFromStatus(lwStatus);
-
+					Logger.d("Tape width : " + tapeWidth);
 					Map<String, Object> printParameter = new HashMap<String, Object>();
 					// Number of copies(1 ... 99)
 					printParameter.put(LWPrintParameterKey.Copies, 1);
@@ -326,7 +329,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 					printParameter.put(LWPrintParameterKey.TapeWidth, tapeWidth);
 
 					if (imageToPrint != null) {
-						lwprint.doPrint(imageToPrint, printParameter);
+						lwprint.doPrintImage(imageToPrint, printParameter);
 					}
 					/*
 					 * String item = spinnerData.getSelectedItem().toString();
@@ -385,12 +388,12 @@ public class EpsonLWPrint extends CordovaPlugin {
 		});
 		// callbackContext.success("");
 	}
-
+/* 
 	public static Bitmap decodeBase64(String input) {
 		byte[] decodedBytes = Base64.getDecoder().decode(input.getBytes());;
 		return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
 	}
-
+*/
 	class ServiceCallback implements LWPrintDiscoverPrinterCallback {
 
 		@Override
