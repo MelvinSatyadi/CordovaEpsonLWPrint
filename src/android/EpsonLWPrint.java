@@ -65,9 +65,12 @@ public class EpsonLWPrint extends CordovaPlugin {
 	private static final String SEP = System.getProperty("line.separator");
 	private String type = "_pdl-datastream._tcp.local.";
 
+	
+
 	List<String> dataList = new ArrayList<String>();
 	List<DeviceInfo> deviceList = new ArrayList<DeviceInfo>();
 
+	LWPrint lwprint;
 	ServiceCallback listener;
 	LWPrintDiscoverPrinter lpPrintDiscoverPrinter;
 
@@ -77,12 +80,22 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	Context myDiscoverContext;
 	CallbackContext myDiscoverCallbackContext;
+	
+	public EpsonLWPrint(){
+		initialize();
+	}
+	
 
 	@Override
 	public boolean execute(String action, JSONArray args,
 			CallbackContext callbackContext) throws JSONException {
 		// Verify that the user sent a 'show' action
-		if (action.equals("startDiscover")) {
+		if (action.equals("initialize")) {
+			initialize();
+			callbackContext.success("Initialized");
+			return true;
+		}
+		else if(action.equals("startDiscover")) {
 			startDiscover(callbackContext);
 			callbackContext.success("Discover Started");
 			return true;
@@ -144,6 +157,14 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.error("\"" + action + "\" is not a recognized action.");
 			return false;
 		}
+	}
+
+	void initialize() {
+		final Context self = this.cordova.getContext();
+		lwprint = new LWPrint(self);
+		PrintCallback printListener = new PrintCallback();
+
+		lwprint.setCallback(printListener);
 	}
 
 	void startDiscover(CallbackContext callbackContext) {
@@ -230,12 +251,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.error("Printer info not set!");
 			return;
 		}
-		
-		final Context self = this.cordova.getContext();
-		LWPrint lwprint = new LWPrint(self);
-		PrintCallback printListener = new PrintCallback();
-
-		lwprint.setCallback(printListener);
+	
 
 		SampleDataProvider sampleDataProvider = new SampleDataProvider();
 
@@ -313,12 +329,6 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.error("Printer info not set!");
 			return;
 		}
-
-		final Context self = this.cordova.getContext();
-		LWPrint lwprint = new LWPrint(self);
-		PrintCallback printListener = new PrintCallback();
-
-		lwprint.setCallback(printListener);
 
 
 		ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -501,6 +511,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 							+ getDeviceStatusForWifiDirect(deviceStatus));
 				}
 			}
+			lpPrintDiscoverPrinter.stopDiscover();
 		}
 
 		private String getDeviceStatusForWifiDirect(int deviceStatus) {

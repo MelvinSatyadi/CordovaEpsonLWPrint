@@ -2,6 +2,10 @@ var exec = require('cordova/exec');
 
 function EpsonLWPrint() { }
 
+EpsonLWPrint.prototype.initialize = function (fnSuccess, fnError) {
+  exec(fnSuccess, fnError, "EpsonLWPrint", "initialize", []);
+}
+
 EpsonLWPrint.prototype.startDiscover = function (fnSuccess, fnError) {
   exec(fnSuccess, fnError, "EpsonLWPrint", "startDiscover", []);
 }
