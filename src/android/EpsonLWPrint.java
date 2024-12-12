@@ -350,7 +350,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 					printResult = false;
 				} else {
 					// Make a print parameter
-					int tapeWidth = lwprint.getTapeWidthFromStatus(lwStatus);
+					int tapeWidth = lwprint.getTapeWidthFromStatus(lwStatus); //Q
 					Logger.d("Tape width : " + tapeWidth);
 					Map<String, Object> printParameter = new HashMap<String, Object>();
 					// Number of copies(1 ... 99)
@@ -740,7 +740,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 				jobPhase = "PrintingPhaseProcessing";
 				break;
 			case LWPrintPrintingPhase.WaitingForPrint:
-				jobPhase = "PrintingPhaseWaitingForPrint";
+				jobPhase = "PrintingPhaseWaitingForPrint"; //Q
 				break;
 			case LWPrintPrintingPhase.Complete:
 				jobPhase = "PrintingPhaseComplete";
