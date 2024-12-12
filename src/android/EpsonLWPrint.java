@@ -101,7 +101,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 			return true;
 		} else if (action.equals("stopDiscover")) {
 			stopDiscover(callbackContext);
-			callbackContext.success("\"" + action + "\" not implemented yet.");
+			//callbackContext.success("\"" + action + "\" not implemented yet.");
 			return true;
 		} else if (action.equals("debugLog")) {
 			Logger.d(args.getString(0));
@@ -165,6 +165,9 @@ public class EpsonLWPrint extends CordovaPlugin {
 		PrintCallback printListener = new PrintCallback();
 
 		lwprint.setCallback(printListener);
+
+		EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
+		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
 	}
 
 	void startDiscover(CallbackContext callbackContext) {
@@ -172,8 +175,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 		List<String> typeList = new ArrayList<String>();
 		typeList.add(type);
 
-		EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
-		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
+		//EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
+		//lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
 
 		// lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(typeList);
 
@@ -193,11 +196,12 @@ public class EpsonLWPrint extends CordovaPlugin {
 		try {
 			Logger.d("stopping discovery");
 			lpPrintDiscoverPrinter.stopDiscover();
+			Logger.d("Discovery stopped");
 		} catch (Exception e) {
 			Logger.d("Error stopping discovery");
 			callbackContext.error("Error stopping discovery! ");
 		}
-		callbackContext.success();
+		callbackContext.success("Discovery stopped");
 	}
 
 	void getDeviceList(CallbackContext callbackContext) {
@@ -511,7 +515,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 							+ getDeviceStatusForWifiDirect(deviceStatus));
 				}
 			}
-			lpPrintDiscoverPrinter.stopDiscover();
+			//lpPrintDiscoverPrinter.stopDiscover();
 		}
 
 		private String getDeviceStatusForWifiDirect(int deviceStatus) {
