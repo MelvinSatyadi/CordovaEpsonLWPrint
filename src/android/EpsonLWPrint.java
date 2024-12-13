@@ -171,13 +171,13 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	void startDiscover(CallbackContext callbackContext) {
 		myDiscoverCallbackContext = callbackContext;
-		List<String> typeList = new ArrayList<String>();
-		typeList.add(type);
+		//List<String> typeList = new ArrayList<String>();
+		//typeList.add(type);
 
 		EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
 		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
 
-		 lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(typeList);
+		 //lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(typeList);
 
 		// Sets the callback
 		lpPrintDiscoverPrinter.setCallback(listener = new ServiceCallback());
