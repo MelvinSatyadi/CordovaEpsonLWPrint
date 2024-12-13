@@ -160,6 +160,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 	}
 
 	void initialize() {
+		Logger.d("Initialize library start");
 		final Context self = this.cordova.getContext();
 		lwprint = new LWPrint(self);
 		PrintCallback printListener = new PrintCallback();
@@ -168,6 +169,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 		EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
 		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
+		Logger.d("Initialize library stop");
 	}
 
 	void startDiscover(CallbackContext callbackContext) {
