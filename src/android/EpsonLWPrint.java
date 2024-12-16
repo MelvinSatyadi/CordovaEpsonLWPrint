@@ -78,7 +78,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 	List<String> dataList = new ArrayList<String>();
 	List<DeviceInfo> deviceList = new ArrayList<DeviceInfo>();
 
-	LWPrint lwprint;
+	private LWPrint lwprint;
 	ServiceCallback listener;
 	LWPrintDiscoverPrinter lpPrintDiscoverPrinter;
 
@@ -281,18 +281,22 @@ public class EpsonLWPrint extends CordovaPlugin {
 	}
 
 	void getStatus(CallbackContext callbackContext){
-		Logger.d("execut getStatus");
+		Logger.d("execute getStatus");
 		if (lwprint == null){
 			Logger.d("lwprint is null");
 			callbackContext.error("lwprint is null");
 		}
+		Logger.d("set printer info");
 		lwprint.setPrinterInformation(printerInfo);
+		Logger.d("write info");
 		Logger.d(printerInfo.toString());
+		Logger.d("fetch printer status");
 		lwStatus = lwprint.fetchPrinterStatus();
 		if (lwStatus == null){
 			Logger.d("lwStatus is null");
 			callbackContext.error("lwStatus is null");
 		}
+		Logger.d("lwstatus tostring");
 		Logger.d(lwStatus.toString());
 		callbackContext.success("STATUS : " + lwStatus.toString());
 	}
