@@ -294,10 +294,10 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.error("Printer info not set!");
 			return;
 		}
-		Logger.d(printerInfo.get("name"));
-		Logger.d(printerInfo.get("type"));
-		Logger.d(printerInfo.get("Serial Number"));
-		Logger.d(printerInfo.get("host"));
+		Logger.d("Name : " + printerInfo.get("name"));
+		Logger.d("Type : " + printerInfo.get("type"));
+		Logger.d("SN : " + printerInfo.get("Serial Number"));
+		Logger.d("host : " + printerInfo.get("host"));
 		Logger.d("write info");
 		Logger.d(printerInfo.toString());
 		lwprint.setPrinterInformation(printerInfo);
