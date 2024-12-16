@@ -281,6 +281,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 	}
 
 	void getStatus(CallbackContext callbackContext){
+		
 		//lwprint = new LWPrint();
 		Logger.d("execute getStatus");
 		if (lwprint == null){
@@ -298,6 +299,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		Logger.d("Type : " + printerInfo.get("type"));
 		Logger.d("SN : " + printerInfo.get("Serial Number"));
 		Logger.d("host : " + printerInfo.get("host"));
+		Logger.d("Name2 : " + printerInfo.get(LWPrintDiscoverPrinter.PRINTER_INFO_NAME));
 		Logger.d("write info");
 		Logger.d(printerInfo.toString());
 		lwprint.setPrinterInformation(printerInfo);
