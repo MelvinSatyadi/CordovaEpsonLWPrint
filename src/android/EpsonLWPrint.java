@@ -95,7 +95,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		//lwStatus = new HashMap
 		Logger.d("Initialize library start");
 		
-		final Context self = cordova.getActivity().getApplicationContext();
+		final Context self = cordova.getActivity();
 		lwprint = new LWPrint(self);
 		PrintCallback printListener = new PrintCallback();
 
