@@ -91,6 +91,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	@Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+		//lwStatus = new HashMap
 		Logger.d("Initialize library start");
 		
 		final Context self = cordova.getActivity().getApplicationContext();
@@ -286,8 +287,12 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.error("lwprint is null");
 		}
 		lwStatus = lwprint.fetchPrinterStatus();
+		if (lwStatus == null){
+			Logger.d("lwStatus is null");
+			callbackContext.error("lwStatus is null");
+		}
 		Logger.d(lwStatus.toString());
-		callbackContext.success(lwStatus.toString());
+		callbackContext.success("STATUS : " + lwStatus.toString());
 	}
 
 	void printText(CallbackContext callbackContext, String textToPrint) {
