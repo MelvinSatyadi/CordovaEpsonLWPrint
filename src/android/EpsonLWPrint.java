@@ -261,7 +261,9 @@ public class EpsonLWPrint extends CordovaPlugin {
 		for (int i = 0; i < pairs.length; i++){
 			String pair = pairs[i];
 			String[] keyValue = pair.split(":");
-			printerInfo.put(keyValue[0], keyValue[1].replace("\\\\", ":"));
+			String itemKey = keyValue[0].replace("\"", "");
+			String itemValue = keyValue[1].replace("\"", "");
+			printerInfo.put(itemKey, itemValue.replace("\\\\", ":"));
 		}
 			/* 
 			printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_NAME, "LW-600P");
