@@ -282,12 +282,12 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	void getStatus(CallbackContext callbackContext){
 		Logger.d("execut getStatus");
-		lwprint.setPrinterInformation(printerInfo);
-		Logger.d(printerInfo.toString());
 		if (lwprint == null){
 			Logger.d("lwprint is null");
 			callbackContext.error("lwprint is null");
 		}
+		lwprint.setPrinterInformation(printerInfo);
+		Logger.d(printerInfo.toString());
 		lwStatus = lwprint.fetchPrinterStatus();
 		if (lwStatus == null){
 			Logger.d("lwStatus is null");
