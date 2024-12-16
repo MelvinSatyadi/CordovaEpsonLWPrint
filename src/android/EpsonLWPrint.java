@@ -23,6 +23,8 @@ import com.epson.lwprint.sdk.LWPrintDataProvider;
 // Cordova-required packages
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaInterface;
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,19 +88,34 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	Context myDiscoverContext;
 	CallbackContext myDiscoverCallbackContext;
-	
+
+	@Override
+	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+		Logger.d("Initialize library start");
+		final Context self = this.cordova.getActivity().getApplicationContext();
+		lwprint = new LWPrint(self);
+		PrintCallback printListener = new PrintCallback();
+
+		lwprint.setCallback(printListener);
+
+		EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
+		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
+		Logger.d("Initialize library stop");
+	}
 	
 
 	@Override
 	public boolean execute(String action, JSONArray args,
 			CallbackContext callbackContext) throws JSONException {
 		// Verify that the user sent a 'show' action
+		/* 
 		if (action.equals("initialize")) {
 			initialize();
 			callbackContext.success("Initialized");
 			return true;
 		}
-		else if(action.equals("startDiscover")) {
+		*/
+		if(action.equals("startDiscover")) {
 			startDiscover(callbackContext);
 			callbackContext.success("Discover Started");
 			return true;
@@ -163,20 +180,6 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.error("\"" + action + "\" is not a recognized action.");
 			return false;
 		}
-	}
-
-	@Override
-	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
-		Logger.d("Initialize library start");
-		final Context self = this.cordova.getActivity().getApplicationContext();
-		lwprint = new LWPrint(self);
-		PrintCallback printListener = new PrintCallback();
-
-		lwprint.setCallback(printListener);
-
-		EnumSet<LWPrintDiscoverConnectionType> flag = EnumSet.of(LWPrintDiscoverConnectionType.ConnectionTypeBluetooth);
-		lpPrintDiscoverPrinter = new LWPrintDiscoverPrinter(null, null, flag);
-		Logger.d("Initialize library stop");
 	}
 
 	void startDiscover(CallbackContext callbackContext) {
