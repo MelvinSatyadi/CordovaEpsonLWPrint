@@ -4,6 +4,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 
+
 //Epson libs
 import com.epson.lwprint.sdk.LWPrint;
 import com.epson.lwprint.sdk.LWPrintDiscoverPrinter;
@@ -47,10 +48,15 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Handler;
 import android.bluetooth.BluetoothAdapter;
 import android.content.res.AssetManager;
 import android.util.Base64;
+
+import static java.lang.Math.ceil;
 
 public class EpsonLWPrint extends CordovaPlugin {
 
@@ -223,6 +229,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 			}
 			json.put(jsonObj);
+			Logger.d(jsonObj.toString());
 		}
 		callbackContext.success(json.toString());
 	}
@@ -240,12 +247,26 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 		printerInfo = new HashMap<String, String>();
 		String[] pairs = printerInfoJSONClean.split(",");
+		 
 		for (int i = 0; i < pairs.length; i++){
 			String pair = pairs[i];
 			String[] keyValue = pair.split(":");
 			printerInfo.put(keyValue[0], keyValue[1].replace("\\\\", ":"));
 		}
-
+			/* 
+			printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_NAME, "LW-600P");
+			//printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_HOST, info.getHost());
+			printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_SERIAL_NUMBER, "FC:08:4A:C2:13:E9");
+			printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_PRODUCT, "LW-600P");
+			printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_USBMDL, "LW-600P");
+			//printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_PORT, info.getPort());
+			printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_TYPE, "_pdl-datastream._bluetooth.");
+			//printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_DOMAIN, info.getDomain());
+			printerInfo.put(LWPrintDiscoverPrinter.PRINTER_INFO_DEVICE_CLASS, "PRINTER");
+			//jsonprinterInfoObj.put(LWPrintDiscoverPrinter.PRINTER_INFO_DEVICE_STATUS, info.getDeviceStatus());
+			*/
+			
+			Logger.d("TEST : " + printerInfo.toString());
 		callbackContext.success("Printer info is set! " + printerInfo.toString());
 	}
 
@@ -324,7 +345,9 @@ public class EpsonLWPrint extends CordovaPlugin {
 		Logger.d("Image Base64 snippet is : " + imageBase64.substring(0, 50));
 
 		final byte[] decodedBytes = Base64.decode(imageBase64, Base64.DEFAULT);
-		Bitmap imageToPrint = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+		//Bitmap imageToPrint = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+
+		Bitmap imageToPrint = createBitmap("AAAAAAAA");
 
 		Logger.d(imageToPrint.toString());
 
@@ -554,6 +577,45 @@ public class EpsonLWPrint extends CordovaPlugin {
 			}
 		}
 
+	}
+
+		private Bitmap createBitmap(String text) {
+		if (printerInfo == null || lwStatus == null) {
+			return null;
+		}
+
+		lwprint.setPrinterInformation(printerInfo);
+		int tapeWidth = lwprint.getTapeWidthFromStatus(lwStatus);
+		int height = lwprint.getPrintableSizeFromTape(tapeWidth);
+		int resolution = lwprint.getResolution();
+		float margin = 1f / 25.4f * (float)resolution;	// margin = 1mm
+
+		Paint paint = new Paint();
+		paint.setTextSize(height * 0.8f);
+		float textSize = paint.measureText(text);
+		float ovalSize = height / 2f;
+		int width = (int)ceil(margin) + (int)(ovalSize * 2 + textSize + (int)ceil(margin));
+
+		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		paint.setColor(Color.WHITE);
+		paint.setStyle(Paint.Style.FILL);
+		canvas.drawRect(0f, 0f, width, height, paint);
+		paint.setColor(Color.BLACK);
+		paint.setStyle(Paint.Style.STROKE);
+		canvas.drawCircle(margin + ovalSize, ovalSize, ovalSize, paint);
+		paint.setStyle(Paint.Style.FILL);
+		canvas.drawText(text, margin + ovalSize * 2f, height - (height * 0.25f), paint);
+
+		Logger.d("height : " + height);
+		Logger.d("width : " + width);
+		Logger.d("tw : " + tapeWidth );
+
+		Logger.d("tw6 : " + lwprint.getPrintableSizeFromTape(6));
+
+
+
+		return bitmap;
 	}
 
 	public enum FormType {
