@@ -34,6 +34,10 @@ EpsonLWPrint.prototype.printText = function(fnSuccess, fnError, textToPrint){
   exec(fnSuccess, fnError, "EpsonLWPrint", "printText",[textToPrint]);
 }
 
+EpsonLWPrint.prototype.getStatus = function(fnSuccess, fnError){
+  exec(fnSuccess, fnError, "EpsonLWPrint", "getStatus");
+}
+
 EpsonLWPrint.prototype.debugLog = function(fnSuccess, fnError, debugString){
   exec(fnSuccess, fnError, "EpsonLWPrint", "debugLog",[debugString]);
 }

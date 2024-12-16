@@ -113,6 +113,9 @@ public class EpsonLWPrint extends CordovaPlugin {
 		} else if (action.equals("getDeviceList")) {
 			getDeviceList(callbackContext);
 			return true;
+		} else if (action.equals("getStatus")) {
+			getStatus(callbackContext);
+			return true;
 
 		} else if (action.equals("checkPermissions")) {
 			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
@@ -268,6 +271,14 @@ public class EpsonLWPrint extends CordovaPlugin {
 			
 			Logger.d("TEST : " + printerInfo.toString());
 		callbackContext.success("Printer info is set! " + printerInfo.toString());
+	}
+
+	void getStatus(CallbackContext callbackContext){
+		lwprint.setPrinterInformation(printerInfo);
+		Logger.d(printerInfo.toString());
+		lwStatus = lwprint.fetchPrinterStatus();
+		Logger.d(lwStatus.toString());
+		callbackContext.success(lwStatus.toString());
 	}
 
 	void printText(CallbackContext callbackContext, String textToPrint) {
