@@ -787,13 +787,16 @@ public class EpsonLWPrint extends CordovaPlugin {
 		lwprint.setPrinterInformation(printerInfo);
 		int tapeWidth = lwprint.getTapeWidthFromStatus(lwStatus);
 		int height = lwprint.getPrintableSizeFromTape(tapeWidth);
-		float scaleFactor = height / oHeight;
+		float scaleFactor = (float)height / (float)oHeight;
 
 		Logger.d("Printable Height : " + String.valueOf(height));
 		Logger.d("Scale Factor : " + String.valueOf(scaleFactor));
 
 		int scaledHeight = (int) Math.round(oHeight * scaleFactor);
 		int scaledWidth = (int) Math.round(oWidth * scaleFactor);
+
+		Logger.d("sWidth : " + String.valueOf(scaledWidth));
+		Logger.d("sHeight : " + String.valueOf(scaledHeight));
 
 		Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
 
