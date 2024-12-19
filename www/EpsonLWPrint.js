@@ -48,6 +48,10 @@ EpsonLWPrint.prototype.debugLog = function(fnSuccess, fnError, debugString){
   exec(fnSuccess, fnError, "EpsonLWPrint", "debugLog",[debugString]);
 }
 
+EpsonLWPrint.prototype.getAndroidVersion = function(fnSuccess, fnError, debugString){
+  exec(fnSuccess, fnError, "EpsonLWPrint", "getAndroidVersion",[]);
+}
+
 EpsonLWPrint.install = function () {
   if (!window.plugins) {
     window.plugins = {};

@@ -110,9 +110,13 @@ public class EpsonLWPrint extends CordovaPlugin {
 		 * return true;
 		 * }
 		 */
+
 		if (action.equals("startDiscover")) {
 			startDiscover(callbackContext);
 			callbackContext.success("Discover Started");
+			return true;
+		} else if (action.equals("getAndroidVersion")) {
+			callbackContext.success(Build.VERSION.SDK_INT);
 			return true;
 		} else if (action.equals("stopDiscover")) {
 			stopDiscover(callbackContext);
@@ -787,7 +791,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		lwprint.setPrinterInformation(printerInfo);
 		int tapeWidth = lwprint.getTapeWidthFromStatus(lwStatus);
 		int height = lwprint.getPrintableSizeFromTape(tapeWidth);
-		float scaleFactor = (float)height / (float)oHeight;
+		float scaleFactor = (float) height / (float) oHeight;
 
 		Logger.d("Printable Height : " + String.valueOf(height));
 		Logger.d("Scale Factor : " + String.valueOf(scaleFactor));
