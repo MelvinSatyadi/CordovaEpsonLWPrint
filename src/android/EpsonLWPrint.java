@@ -117,7 +117,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.success("Discover Started");
 			return true;
 		} else if (action.equals("getAndroidVersion")) {
-			callbackContext.success((String)Build.VERSION.SDK_INT);
+			callbackContext.success(Build.VERSION.SDK_INT);
 			return true;
 		} else if (action.equals("stopDiscover")) {
 			stopDiscover(callbackContext);
