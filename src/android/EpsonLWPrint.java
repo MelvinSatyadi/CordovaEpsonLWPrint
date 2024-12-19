@@ -56,6 +56,7 @@ import android.os.Handler;
 import android.bluetooth.BluetoothAdapter;
 import android.content.res.AssetManager;
 import android.util.Base64;
+import android.os.Build;
 
 import static java.lang.Math.ceil;
 
@@ -116,7 +117,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 			callbackContext.success("Discover Started");
 			return true;
 		} else if (action.equals("getAndroidVersion")) {
-			callbackContext.success(Build.VERSION.SDK_INT);
+			callbackContext.success((String)Build.VERSION.SDK_INT);
 			return true;
 		} else if (action.equals("stopDiscover")) {
 			stopDiscover(callbackContext);
