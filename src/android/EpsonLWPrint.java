@@ -136,37 +136,67 @@ public class EpsonLWPrint extends CordovaPlugin {
 			return true;
 
 		} else if (action.equals("checkPermissions")) {
-			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
-					android.Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED || 
-				PermissionChecker.checkSelfPermission(this.cordova.getContext(),
-					android.Manifest.permission.BLUETOOTH_CONNECT) != PermissionChecker.PERMISSION_GRANTED || 
-				PermissionChecker.checkSelfPermission(this.cordova.getContext(),
-					android.Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED || 
-				PermissionChecker.checkSelfPermission(this.cordova.getContext(),
-					android.Manifest.permission.ACCESS_COARSE_LOCATION) != PermissionChecker.PERMISSION_GRANTED
-					
+			int currentBuildVersion = Build.VERSION.SDK_INT;
+			if (currentBuildVersion >= Build.VERSION_CODES.S) {
+				if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+						android.Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED ||
+						PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+								android.Manifest.permission.BLUETOOTH_CONNECT) != PermissionChecker.PERMISSION_GRANTED
+						||
+						PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+								android.Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED
+						||
+						PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+								android.Manifest.permission.ACCESS_COARSE_LOCATION) != PermissionChecker.PERMISSION_GRANTED
+
 				) {
-				ActivityCompat.requestPermissions(
-						this.cordova.getActivity(),
-						new String[] { android.Manifest.permission.BLUETOOTH_SCAN,
-								android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION },
-						REQUEST_CODE_MULTIPLE_PERMISSION);
-				callbackContext.success("Permission requested.");
-			} else {
-				callbackContext.success("Already granted!");
+					ActivityCompat.requestPermissions(
+							this.cordova.getActivity(),
+							new String[] { android.Manifest.permission.BLUETOOTH_SCAN,
+									android.Manifest.permission.BLUETOOTH_CONNECT,
+									android.Manifest.permission.ACCESS_FINE_LOCATION,
+									android.Manifest.permission.ACCESS_COARSE_LOCATION },
+							REQUEST_CODE_MULTIPLE_PERMISSION);
+					callbackContext.success("Permission requested.");
+				} else {
+					callbackContext.success("Already granted!");
+				}
+			} else if (currentBuildVersion >= Build.VERSION_CODES.R) {
+				if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+						android.Manifest.permission.BLUETOOTH) != PermissionChecker.PERMISSION_GRANTED 
+						||
+						PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+								android.Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED
+						||
+						PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+								android.Manifest.permission.ACCESS_COARSE_LOCATION) != PermissionChecker.PERMISSION_GRANTED
+
+				) {
+					ActivityCompat.requestPermissions(
+							this.cordova.getActivity(),
+							new String[] { android.Manifest.permission.BLUETOOTH,
+									android.Manifest.permission.ACCESS_FINE_LOCATION,
+									android.Manifest.permission.ACCESS_COARSE_LOCATION },
+							REQUEST_CODE_MULTIPLE_PERMISSION);
+					callbackContext.success("Permission requested.");
+				} else {
+					callbackContext.success("Already granted!");
+				}
 			}
-				/* 
-			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
-					android.Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED) {
-				ActivityCompat.requestPermissions(
-						this.cordova.getActivity(),
-						new String[] { android.Manifest.permission.ACCESS_FINE_LOCATION },
-						REQUEST_LOCATION);
-				callbackContext.success("Permission requested.");
-			} else {
-				callbackContext.success("Already granted!");
-			}
-			*/
+
+			/*
+			 * if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+			 * android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+			 * PermissionChecker.PERMISSION_GRANTED) {
+			 * ActivityCompat.requestPermissions(
+			 * this.cordova.getActivity(),
+			 * new String[] { android.Manifest.permission.ACCESS_FINE_LOCATION },
+			 * REQUEST_LOCATION);
+			 * callbackContext.success("Permission requested.");
+			 * } else {
+			 * callbackContext.success("Already granted!");
+			 * }
+			 */
 
 			return true;
 		} else if (action.equals("printImage")) {
