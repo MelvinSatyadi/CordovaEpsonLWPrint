@@ -67,6 +67,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 	public static final int REQUEST_BLUETOOTH_PERMISSION = 1;
 	public static final int REQUEST_LOCATION = 1;
+	public static final int REQUEST_CODE_MULTIPLE_PERMISSION = 100;
 
 	private static final String SEP = System.getProperty("line.separator");
 	private String type = "_pdl-datastream._tcp.local.";
@@ -136,17 +137,25 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 		} else if (action.equals("checkPermissions")) {
 			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
-					android.Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED) {
+					android.Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED || 
+				PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+					android.Manifest.permission.BLUETOOTH_CONNECT) != PermissionChecker.PERMISSION_GRANTED || 
+				PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+					android.Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED || 
+				PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+					android.Manifest.permission.ACCESS_COARSE_LOCATION) != PermissionChecker.PERMISSION_GRANTED
+					
+				) {
 				ActivityCompat.requestPermissions(
 						this.cordova.getActivity(),
 						new String[] { android.Manifest.permission.BLUETOOTH_SCAN,
-								android.Manifest.permission.BLUETOOTH_CONNECT },
-						REQUEST_BLUETOOTH_PERMISSION);
+								android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION },
+						REQUEST_CODE_MULTIPLE_PERMISSION);
 				callbackContext.success("Permission requested.");
 			} else {
 				callbackContext.success("Already granted!");
 			}
-
+				/* 
 			if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
 					android.Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED) {
 				ActivityCompat.requestPermissions(
@@ -157,6 +166,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 			} else {
 				callbackContext.success("Already granted!");
 			}
+			*/
 
 			return true;
 		} else if (action.equals("printImage")) {
