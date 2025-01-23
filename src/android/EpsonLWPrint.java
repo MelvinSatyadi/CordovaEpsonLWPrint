@@ -161,9 +161,12 @@ public class EpsonLWPrint extends CordovaPlugin {
 				} else {
 					callbackContext.success("Already granted!");
 				}
-			} else if (currentBuildVersion >= Build.VERSION_CODES.R) {
+			} else if (currentBuildVersion >= Build.VERSION_CODES.P) {
 				if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
 						android.Manifest.permission.BLUETOOTH) != PermissionChecker.PERMISSION_GRANTED 
+						||
+						PermissionChecker.checkSelfPermission(this.cordova.getContext(),
+								android.Manifest.permission.BLUETOOTH_ADMIN) != PermissionChecker.PERMISSION_GRANTED
 						||
 						PermissionChecker.checkSelfPermission(this.cordova.getContext(),
 								android.Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED
@@ -175,6 +178,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 					ActivityCompat.requestPermissions(
 							this.cordova.getActivity(),
 							new String[] { android.Manifest.permission.BLUETOOTH,
+									android.Manifest.permission.BLUETOOTH_ADMIN,
 									android.Manifest.permission.ACCESS_FINE_LOCATION,
 									android.Manifest.permission.ACCESS_COARSE_LOCATION },
 							REQUEST_CODE_MULTIPLE_PERMISSION);
@@ -458,6 +462,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 				int deviceError = lwprint.getDeviceErrorFromStatus(lwStatus);
 				Logger.d("Get printer error : " + deviceError);
 				if (lwStatus.isEmpty() || (deviceError == LWPrintStatusError.ConnectionFailed)) {
+					lwStatus.clear();
 					printResult = false;
 				} else {
 					// Make a print parameter
@@ -574,7 +579,11 @@ public class EpsonLWPrint extends CordovaPlugin {
 				Logger.d("Get printer error : " + deviceError);
 				if (lwStatus.isEmpty() || (deviceError == LWPrintStatusError.ConnectionFailed)) {
 					printResult = false;
+					Logger.d("Starting printing procedure failure");
+					Logger.d("LWStatus : " + lwStatus.toString());
 				} else {
+					Logger.d("Starting printing procedure");
+					Logger.d("LWStatus : " + lwStatus.toString());
 					// Make a print parameter
 					int tapeWidth = lwprint.getTapeWidthFromStatus(lwStatus); // Q
 					Logger.d("Tape width : " + tapeWidth);
