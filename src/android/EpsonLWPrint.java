@@ -188,20 +188,6 @@ public class EpsonLWPrint extends CordovaPlugin {
 				}
 			}
 
-			/*
-			 * if (PermissionChecker.checkSelfPermission(this.cordova.getContext(),
-			 * android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-			 * PermissionChecker.PERMISSION_GRANTED) {
-			 * ActivityCompat.requestPermissions(
-			 * this.cordova.getActivity(),
-			 * new String[] { android.Manifest.permission.ACCESS_FINE_LOCATION },
-			 * REQUEST_LOCATION);
-			 * callbackContext.success("Permission requested.");
-			 * } else {
-			 * callbackContext.success("Already granted!");
-			 * }
-			 */
-
 			return true;
 		} else if (action.equals("printImage")) {
 			Logger.d("Called printImage");
