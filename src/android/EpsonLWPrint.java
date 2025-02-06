@@ -403,7 +403,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 						if (result == false) {
 							// setProcessing(false);
 
-							String message = "Can't get printer status.";
+							String message = "Printer connection failed.";
 							callbackContext.error(message);
 							// alertAbortOperation("Error", message);
 						} else {
@@ -519,7 +519,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 						if (result == false) {
 							// setProcessing(false);
 
-							String message = "Can't get printer status.";
+							String message = "Printer connection failed.";
 							callbackContext.error(message);
 							// alertAbortOperation("Error", message);
 						} else {
@@ -638,11 +638,11 @@ public class EpsonLWPrint extends CordovaPlugin {
 						if (result == false) {
 							// setProcessing(false);
 
-							String message = "Can't get printer status.";
+							String message = "Printer connection failed.";
 							callbackContext.error(message);
 							// alertAbortOperation("Error", message);
 						} else {
-							callbackContext.success("Print success");
+							callbackContext.success("Print success!");
 						}
 					}
 				});
