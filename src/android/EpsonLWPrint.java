@@ -424,7 +424,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 		final byte[] decodedBytes = Base64.decode(imageBase64, Base64.DEFAULT);
 		Bitmap originalBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
 
-		Bitmap imageToPrint = fitBitmap(originalBitmap);
+		//Bitmap imageToPrint = fitBitmap(originalBitmap);
 
 		if (printerInfo == null) {
 			callbackContext.error("Printer info not set!");
@@ -469,6 +469,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 					printParameter.put(LWPrintParameterKey.TapeWidth, tapeWidth);
 
 					Logger.d("Print parameter : " + printParameter.toString());
+
+					Bitmap imageToPrint = fitBitmap(originalBitmap);
 					if (imageToPrint != null) {
 						lwprint.doPrintImage(imageToPrint, printParameter);
 					}
@@ -815,6 +817,8 @@ public class EpsonLWPrint extends CordovaPlugin {
 	private Bitmap fitBitmap(Bitmap originalBitmap) {
 		Logger.d("running fitBitmap");
 		if (printerInfo == null || lwStatus == null) {
+			Logger.d("pritnerInfo or lwStatus is null");
+			
 			return null;
 		}
 
