@@ -542,7 +542,7 @@ public class EpsonLWPrint extends CordovaPlugin {
 
 		// Bitmap imageToPrint = createBitmap("AAAAAAAA");
 
-		Logger.d(imageToPrint.toString());
+		//Logger.d(imageToPrint.toString());
 
 		if (printerInfo == null) {
 			callbackContext.error("Printer info not set!");
